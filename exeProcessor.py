@@ -129,7 +129,7 @@ if __name__ == '__main__':
             elif next_job_type == 'Rad51':
                 # ERR on mkdir is already checked on server script.
                 os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
-                proc = run_command(['./h2b_pipe.exe', f'{next_job_id}'])
+                proc = run_command(['./rad51.exe', f'{next_job_id}'])
 
             try:
                 cursor.execute("UPDATE job SET status=? WHERE job_id=?;", ['running', next_job_id])
