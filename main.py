@@ -153,7 +153,6 @@ def download_file():
         with app.app_context():
             job_dict = dict()
             job_ids = ''
-            href_path = []
             lens = dict()
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
@@ -164,8 +163,8 @@ def download_file():
                 ## maybe slower than resorting from the all_jobs rather than query for DB
                 finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
                                               [session['username'], 'finished'])))
-                print(finished_jobs)
                 if len(finished_jobs) != 0:
+                    href_path = []
                     job_ids = finished_jobs[:, 0]
                     for job_id in job_ids:
                         files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
