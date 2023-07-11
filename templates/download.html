@@ -13,6 +13,7 @@
         {%for i in range(0, len)%}
             <li>
                 {{job_id}} : {{files[job_id][0][i]}}
+                {{files[job_id][1][i]}}
                 <a href={{files[job_id][1][i]}} download>Download</a>
             </li>
             <br>
