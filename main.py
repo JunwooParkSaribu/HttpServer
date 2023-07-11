@@ -153,13 +153,15 @@ def download_file():
             try:
                 jobs = query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                 [session['username']])
+                job_id = jobs[3]
                 print('loaded jobs:', jobs)
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-        return render_template('download.html', jobs=jobs)
-    #return send_from_directory(SAVE_FOLDER, escape(name))
+
+        #return render_template('download.html', jobs=jobs)
+        return send_from_directory(f'{SAVE_FOLDER}/{job_id}')
     return redirect(request.url)
 
 
