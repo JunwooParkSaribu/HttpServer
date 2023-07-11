@@ -162,7 +162,7 @@ def download_file():
                 return render_template('download.html', jobs=None)
 
         #return render_template('download.html', jobs=jobs)
-        return send_from_directory(f'{SAVE_FOLDER}/{job_ids[0]}')
+        return send_from_directory(f'{job_ids[0]}', f'{SAVE_FOLDER}')
     return redirect(request.url)
 
 
