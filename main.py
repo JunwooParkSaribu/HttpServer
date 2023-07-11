@@ -175,6 +175,12 @@ def download_file():
                                finished_jobs=job_ids, files=job_dict, len=len(href_path))
     return redirect(request.url)
 
+@app.route('/save/<path>', methods=['GET', 'POST'])
+def download(path):
+    #uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    print(path)
+    #return send_from_directory(directory=uploads, filename=filename)
+
 
 if __name__ == '__main__':
     app.run(host="0.0.0.0", port=8080)
