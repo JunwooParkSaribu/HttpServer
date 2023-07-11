@@ -153,6 +153,7 @@ def download_file():
             try:
                 jobs = query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                 [session['username']])
+                print(jobs)
                 job_id = jobs[3]
                 print('loaded jobs:', jobs)
             except Exception as e:
