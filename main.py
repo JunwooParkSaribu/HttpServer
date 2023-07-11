@@ -163,6 +163,7 @@ def download_file():
                 ## maybe slower than resorting from the all_jobs rather than query for DB
                 finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
                                               [session['username'], 'finished'])))
+                print(finished_jobs)
                 if len(finished_jobs) != 0:
                     job_ids = finished_jobs[:, 0]
                     for job_id in job_ids:
