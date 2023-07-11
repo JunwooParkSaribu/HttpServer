@@ -65,6 +65,7 @@ if __name__ == '__main__':
                 job_id_index = i
             if 'job_type' in col:
                 job_type_index = i
+        mydb.commit()
         cursor.close()
     except Exception as e:
         print(e)
@@ -77,7 +78,6 @@ if __name__ == '__main__':
             """
             Get job list from DB and insert into queue
             """
-            mydb.commit()
             cursor = mydb.cursor()
             jobs = list(cursor.execute("SELECT * FROM job WHERE status=?;", ['resources']))
             if len(jobs) != 0:
@@ -114,6 +114,11 @@ if __name__ == '__main__':
                 end_process.append(running_process)
         for finished_process in end_process:
             del process_line[finished_process]
+        try:
+            mydb.commit()
+        except Exception as e:
+            print(e)
+            print('DB commit ERR')
 
         if len(process_line) < NB_PROCESS:
             try:
