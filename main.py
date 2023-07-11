@@ -164,13 +164,13 @@ def download_file():
                 finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
                                               [session['username'], 'finished'])))
                 if len(finished_jobs) != 0:
-                    href_path = []
                     job_ids = finished_jobs[:, 0]
                     for job_id in job_ids:
+                        href_path = []
                         files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
                         for file in files:
                             href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
-                        job_dict[job_id] = [files, href_path]
+                        job_dict[job_id] = [files, href_path.copy()]
                         lens[job_id] = len(href_path)
             except Exception as e:
                 print(e)
