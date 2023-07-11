@@ -164,7 +164,7 @@ def download_file():
                     files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
                     href_path = []
                     for file in files:
-                        href_path.append(f'{SERVER_IP}/{SAVE_FOLDER}/{job_id}/{file}')
+                        href_path.append(f'{SERVER_IP}/save/{job_id}/{file}')
                     job_dict[job_id] = [files, href_path]
                 print(f'Jobs for the account:{session["username"]}: {all_jobs}')
             except Exception as e:
