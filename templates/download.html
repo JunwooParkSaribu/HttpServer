@@ -6,8 +6,13 @@
 </head>
 <body>
 <form method="get" enctype="multipart/form-data">
-{% if jobs %}
-    <h1> {{jobs}}</h1>
+{% if all_jobs %}
+    <h1> {{all_jobs}}</h1>
+
+    {%for job_id in finished_jobs%}
+        <li>{{job_dict[job_id]}}</li>
+    {%endfor%}
+
 {% else %}
     <h1> Any jobs for the account. </h1>
 {% endif %}

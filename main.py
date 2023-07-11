@@ -151,18 +151,23 @@ def upload_files():
 def download_file():
     if request.method == 'GET':
         with app.app_context():
+            job_dict = dict()
             try:
-                jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
+                all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
-                job_ids = jobs[:, 0]
-                print('loaded jobs:', jobs)
+                ## maybe slower than resorting from the all_jobs rather than query for DB
+                finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
+                                              [session['username'], 'finished'])))
+                job_ids = finished_jobs[:, 0]
+                for job_id in job_ids:
+                    files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+                    job_dict[job_id] = files
+                print(f'Jobs for the account:{session["username"]}: {all_jobs}')
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-
-        #return render_template('download.html', jobs=jobs)
-        return send_from_directory(f'{job_ids[0]}', f'{SAVE_FOLDER}')
+        return render_template('download.html', all_jobs=all_jobs, finished_jobs=job_ids, files=job_dict)
     return redirect(request.url)
 
 
