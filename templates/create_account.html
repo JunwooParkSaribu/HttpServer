@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HI</title>
+</head>
+<body>
+
+{% if err %}
+    <h1> User name {{err}} is already exist in the database!</h1>
+{% endif %}
+
+<form method="post">
+    <p><input type=text name=username>
+    <p><input type=submit value=Create>
+</form>
+
+</body>
+</html>
+
+

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>HI</title>
+</head>
+<body>
+
+{% if name %}
+    <h1> Hello {{name}}!</h1>
+{% else %}
+    <h1> Hello, world. </h1>
+{% endif %}
+
+{% if no_user %}
+    <h1> User ID: {{no_user}} is not exist in the Database!</h1>
+{% endif %}
+
+{% if name %}
+<form method="post">
+    <p><input type="submit" value="Logout" name="logout">
+    <p><input type="submit" value="Upload" name="upload">
+    <p><input type="submit" value="Download" name="download">
+</form>
+{% else %}
+<form method="post">
+    <p><input type=text name=username>
+    <p><input type=submit value=Login name="login">
+    <p><input type="submit" value="Create account" name="create_account">
+</form>
+{% endif %}
+
+
+</body>
+</html>
+
+
