@@ -10,9 +10,9 @@
     <h1> {{all_jobs}}</h1>
 
     {%for job_id in finished_jobs%}
-        {%for file, href_path in zip(files[job_id][0], files[job_id][1])%}
-            <li>{{job_id}} : {{file}}</li>
-            <a href={{href_path}} target="_blank">Download</a>
+        {%for i in range(len(files[job_id][0]))%}
+            <li>{{job_id}} : {{files[job_id][0][i]}}</li>
+            <a href={{files[job_id][1][i]}} target="_blank">Download</a>
             <br>
         {%endfor%}
         <br>
