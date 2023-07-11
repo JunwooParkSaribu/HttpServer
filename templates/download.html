@@ -7,13 +7,11 @@
 <body>
 <form method="get" enctype="multipart/form-data">
 {% if submit_job %}
-    <h1> {{all_jobs}}</h1>
-
+    <h3> {{all_jobs}}</h3>
     {%for job_id in finished_jobs%}
         {%for i in range(0, len)%}
             <li>
                 {{job_id}} : {{files[job_id][0][i]}}
-                {{files[job_id][1][i]}}
                 <a href={{files[job_id][1][i]}}>Download</a>
             </li>
             <br>
