@@ -6,10 +6,10 @@ import time
 import queue
 import os
 
-DATA_FOLDER = 'C:/Users/jwoo/Desktop/HTCserver/data'
-SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HTCserver/save'
-MODEL_PATH = 'C:/Users/jwoo/Desktop/HTCserver/model'
-DATA_BASE = 'C:/Users/jwoo/Desktop/HTCserver/users.db'
+DATA_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
+SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
+MODEL_PATH = 'C:/Users/jwoo/Desktop/HttpServer/model'
+DATA_BASE = 'C:/Users/jwoo/Desktop/HttpServer/users.db'
 TIMESTAMP_INDEX = -999
 
 
