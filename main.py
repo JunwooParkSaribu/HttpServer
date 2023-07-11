@@ -155,6 +155,7 @@ def download_file():
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
+                print(all_jobs)
                 if len(all_jobs) == 0:
                     return render_template('download.html', jobs=None)
 
