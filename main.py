@@ -174,12 +174,9 @@ def download_file():
                                finished_jobs=job_ids, files=job_dict, len=len(href_path))
     return redirect(request.url)
 
-@app.route('/save/<job_id>/<path>', methods=['GET', 'POST'])
-def download(job_id, path):
-    #uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
-    print(job_id)
-    print(path)
-    #return send_from_directory(directory=uploads, filename=filename)
+@app.route('/save/<job_id>/<filename>', methods=['GET', 'POST'])
+def download(job_id, filename):
+    return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=filename)
 
 
 if __name__ == '__main__':
