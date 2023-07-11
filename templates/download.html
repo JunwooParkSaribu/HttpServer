@@ -11,8 +11,10 @@
 
     {%for job_id in finished_jobs%}
         {%for i in range(0, len)%}
-            <li>{{job_id}} : {{files[job_id][0][i]}}</li>
-            <a href={{files[job_id][1][i]}} target="_blank">Download</a>
+            <li>
+                {{job_id}} : {{files[job_id][0][i]}}
+                <a href={{files[job_id][1][i]}} download>Download</a>
+            </li>
             <br>
         {%endfor%}
         <br>
