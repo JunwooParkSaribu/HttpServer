@@ -165,7 +165,6 @@ def download_file():
                     for file in files:
                         href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
                     job_dict[job_id] = [files, href_path]
-                print(f'Jobs for the account:{session["username"]}: {all_jobs}')
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')

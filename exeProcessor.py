@@ -90,7 +90,7 @@ if __name__ == '__main__':
             print('ERR on job queueing')
 
         print('Queue size: ', job_queue.qsize())
-        print(process_line)
+        print(process_line, end='/n')
 
         """
         Update the finished job to DB.
@@ -114,7 +114,6 @@ if __name__ == '__main__':
             try:
                 next_job_id, next_job_type = job_queue.get(timeout=5)
             except Exception:
-                print("No job is waiting...")
                 continue
 
             if next_job_type == 'HTC':
