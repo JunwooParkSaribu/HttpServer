@@ -90,7 +90,10 @@ if __name__ == '__main__':
             print('ERR on job queueing')
 
         print('Queue size: ', job_queue.qsize())
-        print(process_line, end='/n')
+        print('Current running process:')
+        for process in process_line:
+            print(process_line)
+        print()
 
         """
         Update the finished job to DB.
