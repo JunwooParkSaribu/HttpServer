@@ -8,7 +8,6 @@ from flask import g
 import numpy as np
 
 
-SERVER_IP = 'http://10.51.5.10:8080'
 UPLOAD_FOLDER = './data'
 SAVE_FOLDER = './save'
 DATABASE = './users.db'
@@ -164,7 +163,7 @@ def download_file():
                     files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
                     href_path = []
                     for file in files:
-                        href_path.append(f'{SERVER_IP}/save/{job_id}/{file}')
+                        href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
                     job_dict[job_id] = [files, href_path]
                 print(f'Jobs for the account:{session["username"]}: {all_jobs}')
             except Exception as e:
@@ -175,9 +174,10 @@ def download_file():
                                finished_jobs=job_ids, files=job_dict, len=len(href_path))
     return redirect(request.url)
 
-@app.route('/save/<path>', methods=['GET', 'POST'])
-def download(path):
+@app.route('/save/<job_id>/<path>', methods=['GET', 'POST'])
+def download(job_id, path):
     #uploads = os.path.join(current_app.root_path, app.config['UPLOAD_FOLDER'])
+    print(job_id)
     print(path)
     #return send_from_directory(directory=uploads, filename=filename)
 
