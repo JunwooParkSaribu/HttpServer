@@ -115,7 +115,7 @@ if __name__ == '__main__':
 
         if len(process_line) < NB_PROCESS:
             try:
-                next_job_id, next_job_type = job_queue.get(timeout=5)
+                next_job_id, next_job_type = job_queue.get(timeout=30)
             except Exception:
                 continue
 
@@ -140,4 +140,4 @@ if __name__ == '__main__':
                 print('DB update for running stats ERROR')
                 exit(1)
         else:
-            time.sleep(30)
+            time.sleep(60)
