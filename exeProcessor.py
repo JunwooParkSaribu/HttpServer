@@ -116,9 +116,17 @@ if __name__ == '__main__':
             except Exception:
                 continue
 
-            if next_job_type == 'HTC':
+            if next_job_type == 'H2B':
                 # ERR on mkdir is already checked on server script.
                 os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
+                if configure_setting(data_path=DATA_FOLDER, save_path=SAVE_FOLDER,
+                                     model_path=MODEL_PATH, job_id=next_job_id):
+                    proc = run_command(['./h2b_pipe.exe', f'{SAVE_FOLDER}/{next_job_id}'])
+
+            elif next_job_type == 'Rad51':
+                # ERR on mkdir is already checked on server script.
+                os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
+                ## CHANGE
                 if configure_setting(data_path=DATA_FOLDER, save_path=SAVE_FOLDER,
                                      model_path=MODEL_PATH, job_id=next_job_id):
                     proc = run_command(['./h2b_pipe.exe', f'{SAVE_FOLDER}/{next_job_id}'])
