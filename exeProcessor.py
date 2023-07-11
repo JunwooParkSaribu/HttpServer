@@ -140,4 +140,4 @@ if __name__ == '__main__':
                 print('DB update for running stats ERROR')
                 exit(1)
         else:
-            time.sleep(10)
+            time.sleep(30)
