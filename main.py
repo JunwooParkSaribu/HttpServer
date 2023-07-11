@@ -11,7 +11,7 @@ import numpy as np
 UPLOAD_FOLDER = './data'
 SAVE_FOLDER = './save'
 DATABASE = './users.db'
-ALLOWED_EXTENSIONS = {'txt', 'py', 'html', 'trxyt'}
+ALLOWED_EXTENSIONS = {'tif', 'trxyt'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
