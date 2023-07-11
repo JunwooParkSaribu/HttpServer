@@ -5,6 +5,7 @@ from werkzeug.utils import secure_filename
 from flask import session
 import sqlite3
 from flask import g
+import numpy as np
 
 
 UPLOAD_FOLDER = './data'
@@ -151,10 +152,9 @@ def download_file():
     if request.method == 'GET':
         with app.app_context():
             try:
-                jobs = query_db(f"SELECT * FROM job WHERE user_name=(?)",
-                                [session['username']])
-                print(jobs)
-                job_id = jobs[3]
+                jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
+                                              [session['username']])))
+                job_ids = jobs[:, 0]
                 print('loaded jobs:', jobs)
             except Exception as e:
                 print(e)
@@ -162,7 +162,7 @@ def download_file():
                 return render_template('download.html', jobs=None)
 
         #return render_template('download.html', jobs=jobs)
-        return send_from_directory(f'{SAVE_FOLDER}/{job_id}')
+        return send_from_directory(f'{SAVE_FOLDER}/{job_ids[0]}')
     return redirect(request.url)
 
 
