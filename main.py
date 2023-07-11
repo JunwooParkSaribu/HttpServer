@@ -167,7 +167,8 @@ def download_file():
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-        return render_template('download.html', all_jobs=all_jobs, finished_jobs=job_ids, files=job_dict)
+        return render_template('download.html', submit_job=True, all_jobs=all_jobs,
+                               finished_jobs=job_ids, files=job_dict)
     return redirect(request.url)
 
 

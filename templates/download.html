@@ -6,7 +6,7 @@
 </head>
 <body>
 <form method="get" enctype="multipart/form-data">
-{% if all_jobs %}
+{% if submit_job %}
     <h1> {{all_jobs}}</h1>
 
     {%for job_id in finished_jobs%}
