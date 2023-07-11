@@ -152,6 +152,7 @@ def download_file():
     if request.method == 'GET':
         with app.app_context():
             job_dict = dict()
+            job_ids = ''
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
