@@ -155,20 +155,20 @@ def download_file():
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
-                print(all_jobs)
                 if len(all_jobs) == 0:
                     return render_template('download.html', jobs=None)
 
                 ## maybe slower than resorting from the all_jobs rather than query for DB
                 finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
                                               [session['username'], 'finished'])))
-                job_ids = finished_jobs[:, 0]
-                for job_id in job_ids:
-                    files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
-                    href_path = []
-                    for file in files:
-                        href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
-                    job_dict[job_id] = [files, href_path]
+                if len(finished_jobs) != 0:
+                    job_ids = finished_jobs[:, 0]
+                    for job_id in job_ids:
+                        files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+                        href_path = []
+                        for file in files:
+                            href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
+                        job_dict[job_id] = [files, href_path]
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')
