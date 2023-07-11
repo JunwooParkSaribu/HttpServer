@@ -48,9 +48,11 @@ if __name__ == '__main__':
     NB_PROCESS = 2
     job_id_index = -999
     job_type_index = -999
+    sleep_time = 30
+    q_size = 10
     process_line = {}
     jobs = []
-    job_queue = queue.Queue(maxsize=10)
+    job_queue = queue.Queue(maxsize=q_size)
 
     try:
         mydb = sqlite3.connect(DATA_BASE)
@@ -115,7 +117,7 @@ if __name__ == '__main__':
 
         if len(process_line) < NB_PROCESS:
             try:
-                next_job_id, next_job_type = job_queue.get(timeout=30)
+                next_job_id, next_job_type = job_queue.get(timeout=sleep_time)
             except Exception:
                 continue
 
@@ -140,4 +142,4 @@ if __name__ == '__main__':
                 print('DB update for running stats ERROR')
                 exit(1)
         else:
-            time.sleep(60)
+            time.sleep(sleep_time)
