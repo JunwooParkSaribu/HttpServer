@@ -154,6 +154,7 @@ def download_file():
             job_dict = dict()
             job_ids = ''
             href_path = []
+            lens = dict()
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
@@ -171,12 +172,13 @@ def download_file():
                         for file in files:
                             href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
                         job_dict[job_id] = [files, href_path]
+                        lens[job_id] = len(href_path)
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
         return render_template('download.html', submit_job=True, all_jobs=all_jobs,
-                               finished_jobs=job_ids, files=job_dict, len=len(href_path))
+                               finished_jobs=job_ids, files=job_dict, len=lens)
     return redirect(request.url)
 
 @app.route('/save/<job_id>/<filename>', methods=['GET', 'POST'])
