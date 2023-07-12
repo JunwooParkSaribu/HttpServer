@@ -106,16 +106,17 @@ if __name__ == '__main__':
                     print('Process completed: ', running_process)
                     cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
                                    ['finished', process_line[running_process]])
+                    end_process.append(running_process)
                 elif running_process.poll() == 1:
                     print('Process ERR(1): ', running_process)
                     cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
                                    ['canceled', process_line[running_process]])
+                    end_process.append(running_process)
             except Exception as e:
                 print(e)
                 print('ERR on running process (DB cursor ERR):',
                       process_line[running_process])
                 exit(1)
-            end_process.append(running_process)
 
         for finished_process in end_process:
             del process_line[finished_process]
