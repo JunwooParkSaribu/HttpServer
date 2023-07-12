@@ -6,6 +6,7 @@ from flask import session
 import sqlite3
 from flask import g
 import numpy as np
+import datetime
 
 
 UPLOAD_FOLDER = './data'
@@ -140,8 +141,9 @@ def upload_files():
             return redirect(request.url)
 
         try:
-            query_db(f"INSERT INTO job (user_name, job_id, job_type, status) VALUES (?, ?, ?, ?)",
-                     [session['username'], job_id, job_type, 'resources'])
+            current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            query_db(f"INSERT INTO job (user_name, job_id, job_type, status, submit_time) VALUES (?, ?, ?, ?, ?)",
+                     [session['username'], job_id, job_type, 'resources', current_time])
             query_db(f'COMMIT')
         except Exception as e:
             print(e)

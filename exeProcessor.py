@@ -102,15 +102,16 @@ if __name__ == '__main__':
         """
         for running_process in process_line:
             try:
+                current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 if running_process.poll() == 0:
-                    print('Process completed: ', running_process)
-                    cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
-                                   ['finished', process_line[running_process]])
+                    print('Process finished for the job : ', process_line[running_process])
+                    cursor.execute("UPDATE job SET status=? AND end_time=? WHERE job_id=?;",
+                                   ['finished', current_time, process_line[running_process]])
                     end_process.append(running_process)
                 elif running_process.poll() == 1:
                     print('Process ERR(1): ', running_process)
-                    cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
-                                   ['canceled', process_line[running_process]])
+                    cursor.execute("UPDATE job SET status=? AND end_time=? WHERE job_id=?;",
+                                   ['canceled', current_time, process_line[running_process]])
                     end_process.append(running_process)
             except Exception as e:
                 print(e)
