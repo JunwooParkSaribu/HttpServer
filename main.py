@@ -10,7 +10,7 @@ import numpy as np
 
 UPLOAD_FOLDER = './data'
 SAVE_FOLDER = './save'
-DATABASE = './users.db'
+DATABASE = './fiona.db'
 ALLOWED_EXTENSIONS = {'tif', 'trxyt'}
 
 app = Flask(__name__)
@@ -45,7 +45,8 @@ def create_account():
     if request.method == 'POST':
         with app.app_context():
             try:
-                query_db(f"INSERT INTO users (name) VALUES (?)", [request.form['username']])
+                query_db(f"INSERT INTO users (name, password) VALUES (?, ?)",
+                         [request.form['username'], request.form['password']])
                 query_db(f'COMMIT')
             except Exception as e:
                 print(e)
@@ -74,15 +75,19 @@ def index():
         if 'login' in request.form:
             try:
                 username = request.form['username']
+                password = request.form['password']
                 # only for the name column in the DB
-                user_exist = query_db(f'SELECT COUNT() FROM users WHERE name = (?)', [username]).pop()[0]
+                user_exist = query_db(f'SELECT COUNT() FROM users WHERE name = (?) AND password = (?)',
+                                      [username, password]).pop()[0]
                 if user_exist == 0:
-                    return render_template('hello.html', no_user=username)
+                    flash('Wrong user name or password')
+                    error = 'Invalid credentials'
+                    return render_template('hello.html', error=error)
                 else:
                     session['username'] = username
             except Exception as e:
                 print(e)
-                print("user name not exist")
+                print("Wrong user name or password")
                 return redirect(url_for('index'))
 
         if 'username' in session:
@@ -116,6 +121,12 @@ def upload_files():
         except Exception as e:
             print(e)
             print('No job type selected')
+            return redirect(request.url)
+
+        for file in files:
+            if not allowed_file(file.filename):
+                print('Not allowed file type: ', file.filename)
+                return redirect(request.url)
 
         job_id = request.form['job_id']
         if job_id == '':

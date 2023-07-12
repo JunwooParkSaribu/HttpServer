@@ -9,8 +9,8 @@ import os
 DATA_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
 MODEL_PATH = 'C:/Users/jwoo/Desktop/HttpServer/model'
-DATA_BASE = 'C:/Users/jwoo/Desktop/HttpServer/users.db'
-TIMESTAMP_INDEX = -999
+DATA_BASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
+SUBMITTIME_INDEX = -999
 
 
 def configure_setting(data_path, save_path, model_path, job_id) -> bool:
@@ -36,7 +36,7 @@ def configure_setting(data_path, save_path, model_path, job_id) -> bool:
 
 
 def get_date_from_tuple(tuple):
-    return datetime.datetime.strptime(tuple[TIMESTAMP_INDEX], "%Y-%m-%d %H:%M:%S")
+    return datetime.datetime.strptime(tuple[SUBMITTIME_INDEX], "%Y-%m-%d %H:%M:%S")
 
 
 def run_command(cmd):
@@ -59,8 +59,8 @@ if __name__ == '__main__':
         cursor = mydb.cursor()
         cols = list(cursor.execute("SELECT c.name FROM pragma_table_info('job') c;"))
         for i, col in enumerate(cols):
-            if 'Timestamp' in col:
-                TIMESTAMP_INDEX = i
+            if 'submit_time' in col:
+                SUBMITTIME_INDEX = i
             if 'job_id' in col:
                 job_id_index = i
             if 'job_type' in col:
@@ -101,17 +101,22 @@ if __name__ == '__main__':
         Update the finished job to DB.
         """
         for running_process in process_line:
-            if running_process.poll() == 0:
-                print('Process completed: ', running_process)
-                try:
+            try:
+                if running_process.poll() == 0:
+                    print('Process completed: ', running_process)
                     cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
                                    ['finished', process_line[running_process]])
-                except Exception as e:
-                    print(e)
-                    print('ERR job id:,', process_line[running_process])
-                    print('DB update for finished stats ERROR')
-                    exit(1)
-                end_process.append(running_process)
+                elif running_process.poll() == 1:
+                    print('Process ERR(1): ', running_process)
+                    cursor.execute("UPDATE job SET status=? WHERE job_id=?;",
+                                   ['canceled', process_line[running_process]])
+            except Exception as e:
+                print(e)
+                print('ERR on running process (DB cursor ERR):',
+                      process_line[running_process])
+                exit(1)
+            end_process.append(running_process)
+
         for finished_process in end_process:
             del process_line[finished_process]
         try:
@@ -126,19 +131,19 @@ if __name__ == '__main__':
             except Exception:
                 continue
 
-            if next_job_type == 'H2B':
-                # ERR on mkdir is already checked on server script.
-                os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
-                if configure_setting(data_path=DATA_FOLDER, save_path=SAVE_FOLDER,
-                                     model_path=MODEL_PATH, job_id=next_job_id):
-                    proc = run_command(['./h2b_pipe.exe', f'{SAVE_FOLDER}/{next_job_id}'])
-
-            elif next_job_type == 'Rad51':
-                # ERR on mkdir is already checked on server script.
-                os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
-                proc = run_command(['./rad51.exe', f'{next_job_id}'])
-
             try:
+                if next_job_type == 'H2B':
+                    # ERR on mkdir is already checked on server script.
+                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
+                    if configure_setting(data_path=DATA_FOLDER, save_path=SAVE_FOLDER,
+                                         model_path=MODEL_PATH, job_id=next_job_id):
+                        proc = run_command(['./h2b_pipe.exe', f'{SAVE_FOLDER}/{next_job_id}'])
+
+                elif next_job_type == 'Rad51':
+                    # ERR on mkdir is already checked on server script.
+                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
+                    proc = run_command(['./rad51.exe', f'{next_job_id}'])
+
                 cursor.execute("UPDATE job SET status=? WHERE job_id=?;", ['running', next_job_id])
                 process_line[proc] = next_job_id
             except Exception as e:
