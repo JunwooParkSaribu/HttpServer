@@ -94,7 +94,7 @@ if __name__ == '__main__':
         print('Queue size: ', job_queue.qsize())
         print('Current running process:')
         for process in process_line:
-            print(process_line)
+            print(f'{process} : {process_line[process]}')
         print()
 
         """
