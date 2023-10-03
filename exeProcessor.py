@@ -35,9 +35,6 @@ def configure_setting(data_path, save_path, model_path, job_id) -> bool:
     return True
 
 
-
-
-
 def get_date_from_tuple(tuple):
     return datetime.datetime.strptime(tuple[SUBMITTIME_INDEX], "%Y-%m-%d %H:%M:%S")
 
