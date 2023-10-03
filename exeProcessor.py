@@ -134,6 +134,7 @@ if __name__ == '__main__':
                 continue
 
             try:
+                # next_job_id is for the path of configuration file
                 if next_job_type == 'H2B':
                     # ERR on mkdir is already checked on server script.
                     os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')

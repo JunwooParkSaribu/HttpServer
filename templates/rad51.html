@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/static/draw.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" id="nd2" name="filename">
+    <input type="submit" value="Upload">
+</form>
+
+{% if images %}
+    <div class="outsideWrapper">
+        <div class="insideWrapper">
+            <img id="red" src="{{ url_for('static', filename=images[0]) }}" class="coveredImage">
+            <canvas id="canvas" class="coveringCanvas"></canvas>
+            <script src="/static/draw.js"></script>
+        </div>
+    </div>
+{% endif %}
+
+
+<form method="post" enctype="multipart/form-data">
+    <input type="text" name="job_id">
+    <textarea name="coord_data" id="coord" rows="1" cols="9"></textarea>
+    <script src="/static/draw.js"></script>
+    <button type="submit" name="run_program">Run</button>
+</form>
+
+</body>
+</html>
