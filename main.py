@@ -14,11 +14,11 @@ import glob
 import shutil
 
 
-UPLOAD_FOLDER = './data'
-SAVE_FOLDER = './save'
-MODEL_FOLDER = './model'
-DATABASE = './fiona.db'
-ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2', 'txt'}
+UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
+SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
+MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
+DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
+ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
