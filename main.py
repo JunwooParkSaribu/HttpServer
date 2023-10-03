@@ -16,6 +16,7 @@ import shutil
 
 UPLOAD_FOLDER = './data'
 SAVE_FOLDER = './save'
+MODEL_FOLDER = './model'
 DATABASE = './fiona.db'
 ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2', 'txt'}
 
@@ -214,15 +215,16 @@ def rad51_classify():
                 return redirect(request.url)
 
         if 'run_program' in request.form:
-            job_type = 'rad51'
+            job_type = 'Rad51_protein'
             pixel_size = (20, 20)
-            print(request.form)
+
             if 'job_id' not in request.form:
                 print('Input job id')
                 return redirect(request.url)
 
             if 'coord_data' in request.form:
                 pixel_size = request.form.get('coord_data')
+                pixel_size = (int(pixel_size.split(',')[0]), int(pixel_size.split(',')[1]))
             job_id = request.form['job_id']
 
             try:
@@ -244,6 +246,14 @@ def rad51_classify():
                 return redirect(request.url)
 
             shutil.copy2(f'./static/dummy/{session["rad51_filename"]}', f'{UPLOAD_FOLDER}/{job_id}')
+            with open(f'{UPLOAD_FOLDER}/{job_id}/config.txt', 'w') as f:
+                input_str = ''
+                input_str += f'data = {UPLOAD_FOLDER}/{job_id}/{session["rad51_filename"]}\n'
+                input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
+                input_str += f'model_dir = {MODEL_FOLDER}/model_rad51_protein\n'
+                input_str += f'pixel_size = {str(min(pixel_size))}\n'
+                f.write(input_str)
+
             for dummy in os.scandir(f'./static/dummy'):
                 os.remove(dummy.path)
     job_id = None

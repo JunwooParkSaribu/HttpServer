@@ -35,6 +35,9 @@ def configure_setting(data_path, save_path, model_path, job_id) -> bool:
     return True
 
 
+
+
+
 def get_date_from_tuple(tuple):
     return datetime.datetime.strptime(tuple[SUBMITTIME_INDEX], "%Y-%m-%d %H:%M:%S")
 
@@ -146,6 +149,11 @@ if __name__ == '__main__':
                     # ERR on mkdir is already checked on server script.
                     os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
                     proc = run_command(['./rad51.exe', f'{next_job_id}'])
+
+                elif next_job_type == 'Rad51_protein':
+                    # ERR on mkdir is already checked on server script.
+                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
+                    proc = run_command(['./rad51_protein.exe', f'{next_job_id}'])
 
                 cursor.execute("UPDATE job SET status=? WHERE job_id=?;", ['running', next_job_id])
                 process_line[proc] = next_job_id
