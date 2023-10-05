@@ -15,7 +15,7 @@ import shutil
 
 
 UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
-SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
+SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
 ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2'}
