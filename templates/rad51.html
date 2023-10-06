@@ -12,6 +12,11 @@
 
 <form method="post" enctype="multipart/form-data">
     <input type="file" id="nd2" name="filename">
+    <label for="z_projection">Choose a z-projection:</label>
+    <select name="z_projection" id="z_projection">
+        <option value="mean">max</option>
+        <option value="max">mean</option>
+    </select>
     <input type="submit" value="Upload">
 </form>
 
@@ -27,8 +32,8 @@
 
 
 <form method="post" enctype="multipart/form-data">
-    <input type="text" name="job_id">
-    <textarea name="coord_data" id="coord" rows="1" cols="9"></textarea>
+    <p>Job id:<input type="text" name="job_id"></p>
+    <p>pixel size:<textarea name="coord_data" id="coord" rows="1" cols="9"></textarea></p>
     <script src="/static/draw.js"></script>
     <button type="submit" name="run_program">Run</button>
 </form>

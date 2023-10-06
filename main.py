@@ -15,7 +15,7 @@ import shutil
 
 
 UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
-SAVE_FOLDER = 'save'
+SAVE_FOLDER = './save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
 ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2'}
@@ -196,6 +196,8 @@ def rad51_classify():
                 nd2_file = request.files['filename']
                 filename = secure_filename(nd2_file.filename)
                 session['rad51_filename'] = filename
+                session['z_projection'] = request.form.get('z_projection')
+                print(session['z_projection'])
                 nd2_file.save(f'./static/dummy/{filename}')
                 red, green, blue = read_nd2.read_nd2(f'./static/dummy/{filename}')
 
@@ -216,7 +218,8 @@ def rad51_classify():
 
         if 'run_program' in request.form:
             job_type = 'Rad51_protein'
-            pixel_size = (20, 20)
+            z_projection = session['z_projection']
+            pixel_size = (15, 15)
 
             if 'job_id' not in request.form:
                 print('Input job id')
@@ -252,6 +255,7 @@ def rad51_classify():
                 input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
                 input_str += f'model_dir = {MODEL_FOLDER}/model_rad51_protein\n'
                 input_str += f'pixel_size = {str(min(pixel_size))}\n'
+                input_str += f'z_projection = {z_projection}'
                 f.write(input_str)
 
             for dummy in os.scandir(f'./static/dummy'):
