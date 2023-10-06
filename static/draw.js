@@ -1,13 +1,13 @@
 const rectangle = document.createElement("div");
 rectangle.style.position = "absolute";
-rectangle.style.backgroundColor = "rgba(255,255,0, 0.5)";
+rectangle.style.backgroundColor = "rgba(255,255,0, 0.1)";
 rectangle.style.border = "0px dashed black";
 document.body.appendChild(rectangle);
 
     let rec_top = 0;
-    let rec_height = 20;
+    let rec_height = 15;
     let rec_left = 0;
-    let rec_width = 20;
+    let rec_width = 15;
 
     let isDragged = false;
     let rectangleCoords = [];

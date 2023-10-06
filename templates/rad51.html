@@ -11,7 +11,7 @@
 <body>
 
 <form method="post" enctype="multipart/form-data">
-    <input type="file" id="nd2" name="filename" size="20">
+    <input type="file" id="nd2" name="filename" size="50">
     <label for="z_projection">Choose a z-projection:</label>
     <select name="z_projection" id="z_projection">
         <option value="mean">mean</option>
@@ -30,13 +30,17 @@
     </div>
 {% endif %}
 
-
 <form method="post" enctype="multipart/form-data">
     <p>Job id:<input type="text" name="job_id"></p>
     <p>pixel size:<textarea name="coord_data" id="coord" rows="1" cols="9"></textarea></p>
     <script src="/static/draw.js"></script>
     <button type="submit" name="run_program">Run</button>
 </form>
-
+<br>
+{% if images %}
+    {%for i in range(0, len)%}
+        <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}">
+    {%endfor%}
+{% endif %}
 </body>
 </html>

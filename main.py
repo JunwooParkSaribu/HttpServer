@@ -214,7 +214,7 @@ def rad51_classify():
                 imageio.imwrite(f'./static/{static_urls[3]}', red + green + trans)
                 print('####################')
 
-                return render_template('rad51.html', images=static_urls)
+                return render_template('rad51.html', images=static_urls, len=len(static_urls))
             except Exception as e:
                 print('Image create Err:', e)
                 return redirect(request.url)
