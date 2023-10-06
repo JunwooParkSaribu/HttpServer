@@ -197,18 +197,21 @@ def rad51_classify():
                 filename = secure_filename(nd2_file.filename)
                 session['rad51_filename'] = filename
                 session['z_projection'] = request.form.get('z_projection')
+                z_projection = session['z_projection']
                 print(session['z_projection'])
                 nd2_file.save(f'./static/dummy/{filename}')
-                red, green, blue = read_nd2.read_nd2(f'./static/dummy/{filename}')
+                red, green, trans = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
 
                 static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
                                f'dummy/{filename.split(".nd2")[0]}_green.png',
-                               f'dummy/{filename.split(".nd2")[0]}_trans.png'
+                               f'dummy/{filename.split(".nd2")[0]}_trans.png',
+                               f'dummy/{filename.split(".nd2")[0]}_all.png'
                                ]
 
                 imageio.imwrite(f'./static/{static_urls[0]}', red)
                 imageio.imwrite(f'./static/{static_urls[1]}', green)
-                imageio.imwrite(f'./static/{static_urls[2]}', blue)
+                imageio.imwrite(f'./static/{static_urls[2]}', trans)
+                imageio.imwrite(f'./static/{static_urls[3]}', red + green + trans)
                 print('####################')
 
                 return render_template('rad51.html', images=static_urls)

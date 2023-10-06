@@ -3,17 +3,22 @@ import numpy as np
 import cv2
 
 
-def read_nd2(filepath):
+def read_nd2(filepath, option='mean'):
     # nd2reader is for metadata
     with nd2.ND2File(filepath) as ndfile:
         green = np.array([np.array(ndfile)[x][0] for x in range(ndfile.shape[0])])
         red = np.array([np.array(ndfile)[x][1] for x in range(ndfile.shape[0])])
         trans = np.array([np.array(ndfile)[x][2] for x in range(ndfile.shape[0])])
 
-        # Max z-projection
-        red = (np.array(red / np.max(red))).max(axis=0)
-        green = (np.array(green / np.max(green))).max(axis=0)
-        trans = (np.array(trans / np.max(trans))).max(axis=0)
+        # z-projection
+        if option == 'mean':
+            red = (np.array(red / np.max(red))).mean(axis=0)
+            green = (np.array(green / np.max(green))).mean(axis=0)
+            trans = (np.array(trans / np.max(trans))).mean(axis=0)
+        else:
+            red = (np.array(red / np.max(red))).max(axis=0)
+            green = (np.array(green / np.max(green))).max(axis=0)
+            trans = (np.array(trans / np.max(trans))).max(axis=0)
 
         red = cv2.resize(red, (512, 512))
         green = cv2.resize(green, (512, 512))
