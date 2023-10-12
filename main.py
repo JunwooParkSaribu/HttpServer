@@ -15,7 +15,7 @@ import shutil
 
 
 UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
-SAVE_FOLDER = './save'
+SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
 ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2'}
@@ -201,13 +201,11 @@ def rad51_classify():
                 print(session['z_projection'])
                 nd2_file.save(f'./static/dummy/{filename}')
                 red, green, trans = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
-
                 static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
                                f'dummy/{filename.split(".nd2")[0]}_green.png',
                                f'dummy/{filename.split(".nd2")[0]}_trans.png',
                                f'dummy/{filename.split(".nd2")[0]}_all.png'
                                ]
-
                 imageio.imwrite(f'./static/{static_urls[0]}', red)
                 imageio.imwrite(f'./static/{static_urls[1]}', green)
                 imageio.imwrite(f'./static/{static_urls[2]}', trans)

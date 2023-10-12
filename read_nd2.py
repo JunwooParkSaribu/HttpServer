@@ -20,12 +20,8 @@ def read_nd2(filepath, option='mean'):
             green = (np.array(green / np.max(green))).max(axis=0)
             trans = (np.array(trans / np.max(trans))).max(axis=0)
 
-        red = cv2.resize(red, (512, 512))
-        green = cv2.resize(green, (512, 512))
-        trans = cv2.resize(trans, (512, 512))
-
         # Stacking
-        red = np.stack([red, np.zeros(red.shape), np.zeros(red.shape)], axis=2)
-        green = np.stack([np.zeros(green.shape), green, np.zeros(green.shape)], axis=2)
-        trans = np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=2)
+        red = np.array(np.stack([red, np.zeros(red.shape), np.zeros(red.shape)], axis=2) * 255).astype(np.uint8)
+        green = np.array(np.stack([np.zeros(green.shape), green, np.zeros(green.shape)], axis=2) * 255).astype(np.uint8)
+        trans = np.array(np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=2) * 255).astype(np.uint8)
     return red, green, trans
