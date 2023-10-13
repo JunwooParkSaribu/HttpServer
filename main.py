@@ -220,15 +220,16 @@ def rad51_classify():
         if 'run_program' in request.form:
             job_type = 'Rad51_protein'
             z_projection = session['z_projection']
-            pixel_size = (15, 15)
+            score = 50
 
             if 'job_id' not in request.form:
                 print('Input job id')
                 return redirect(request.url)
 
-            if 'coord_data' in request.form:
-                pixel_size = request.form.get('coord_data')
-                pixel_size = (int(pixel_size.split(',')[0]), int(pixel_size.split(',')[1]))
+            if 'score' in request.form:
+                score = int(request.form.get('score'))
+                if score < 0 or score > 100:
+                    score = 0
             job_id = request.form['job_id']
 
             try:
@@ -255,8 +256,7 @@ def rad51_classify():
                 input_str += f'data = {UPLOAD_FOLDER}/{job_id}/{session["rad51_filename"]}\n'
                 input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
                 input_str += f'model_dir = {MODEL_FOLDER}/model_rad51_protein\n'
-                input_str += f'pixel_size = {str(min(pixel_size))}\n'
-                input_str += f'z_projection = {z_projection}'
+                input_str += f'score = {str(score)}\n'
                 f.write(input_str)
 
             for dummy in os.scandir(f'./static/dummy'):
