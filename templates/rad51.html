@@ -34,16 +34,29 @@
     <p>Job id:<input type="text" name="job_id"></p>
     <p>
     <label>Score:</label>
-    <input type="number" id="score" name="score" min="0" max="100">
+    <input type="number" id="score" name="score" min="0" max="100" value="0">
     </p>
     <script src="/static/draw.js"></script>
     <button type="submit" name="run_program">Run</button>
 </form>
+
+{% if job_exist %}
+<p> There is already a same job id on the server, please choose another job id. </p>
+{% endif %}
+
+{% if job_submission %}
+<p> <b>Successfully job submitted.</b> </p>
+{% endif %}
+
 <br>
 {% if images %}
     {%for i in range(0, len)%}
         <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}">
     {%endfor%}
 {% endif %}
+
+<p>References</p>
+<p><b>Mask R-CNN</b>, Kaiming H. et al. <a href="https://doi.org/10.48550/arXiv.1703.06870">https://doi.org/10.48550/arXiv.1703.06870</a></p>
+
 </body>
 </html>

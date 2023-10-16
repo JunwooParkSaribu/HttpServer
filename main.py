@@ -111,6 +111,10 @@ def index():
 
     elif request.method == 'GET':
         pass
+
+    if 'username' in session:
+        return render_template('hello.html', name=session["username"])
+
     return render_template('hello.html')
 
 
@@ -154,7 +158,7 @@ def upload_files():
         except Exception as e:
             print(e)
             print('Job_Id is already exist')
-            return redirect(request.url)
+            return render_template('upload.html', job_exist=True)
 
         try:
             current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -222,15 +226,16 @@ def rad51_classify():
             z_projection = session['z_projection']
             score = 50
 
-            if 'job_id' not in request.form:
+            if len(request.form['job_id']) == 0:
                 print('Input job id')
                 return redirect(request.url)
+            else:
+                job_id = request.form['job_id']
 
             if 'score' in request.form:
                 score = int(request.form.get('score'))
                 if score < 0 or score > 100:
                     score = 0
-            job_id = request.form['job_id']
 
             try:
                 job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
@@ -238,7 +243,7 @@ def rad51_classify():
             except Exception as e:
                 print(e)
                 print('Job_Id is already exist')
-                return redirect(request.url)
+                return render_template('rad51.html', job_exist=True)
 
             try:
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -261,6 +266,8 @@ def rad51_classify():
 
             for dummy in os.scandir(f'./static/dummy'):
                 os.remove(dummy.path)
+
+            return render_template('rad51.html', job_submission=True)
     job_id = None
     return render_template('rad51.html')
 
