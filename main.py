@@ -260,7 +260,6 @@ def rad51_classify():
                 input_str = ''
                 input_str += f'data = {UPLOAD_FOLDER}/{job_id}/{session["rad51_filename"]}\n'
                 input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
-                input_str += f'model_dir = {MODEL_FOLDER}/model_rad51_protein\n'
                 input_str += f'score = {str(score)}\n'
                 f.write(input_str)
 
