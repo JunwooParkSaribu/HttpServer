@@ -3,7 +3,6 @@ from flask import Flask, flash, request, redirect, url_for, render_template, sen
 from markupsafe import escape
 from werkzeug.utils import secure_filename
 from flask import session
-from PIL import Image as im
 import sqlite3
 from flask import g
 import numpy as np
@@ -196,13 +195,11 @@ def rad51_classify():
                     return redirect(request.url)
 
             try:
-                print("@@@@@@@@@@@@@@@@@@@@")
                 nd2_file = request.files['filename']
                 filename = secure_filename(nd2_file.filename)
                 session['rad51_filename'] = filename
                 session['z_projection'] = request.form.get('z_projection')
                 z_projection = session['z_projection']
-                print(session['z_projection'])
                 nd2_file.save(f'./static/dummy/{filename}')
                 red, green, trans, infos = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
                 static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
@@ -214,7 +211,6 @@ def rad51_classify():
                 imageio.imwrite(f'./static/{static_urls[1]}', green)
                 imageio.imwrite(f'./static/{static_urls[2]}', trans)
                 imageio.imwrite(f'./static/{static_urls[3]}', red + green + trans)
-                print('####################')
 
                 return render_template('rad51.html', images=static_urls, len=len(static_urls), infos=infos)
             except Exception as e:
@@ -276,18 +272,17 @@ def download_file():
     if request.method == 'GET':
         with app.app_context():
             job_dict = dict()
-            job_ids = ''
             lens = dict()
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
                                               [session['username']])))
                 if len(all_jobs) == 0:
                     return render_template('download.html', jobs=None)
-                print(all)
+
                 ## maybe slower than resorting from the all_jobs rather than query for DB
                 #finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
                 #                              [session['username'], 'finished'])))
-                #if len(finished_jobs) != 0:
+
                 job_ids = all_jobs[:, 0]
                 for job_id in job_ids:
                     href_path = []
@@ -300,8 +295,7 @@ def download_file():
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-        return render_template('download.html', submit_job=True, all_jobs=all_jobs, all_job_len=len(all_jobs),
-                               finished_jobs=job_ids, files=job_dict, len=lens)
+        return render_template('download.html', submit_job=True, all_jobs=all_jobs, files=job_dict, job_len=lens)
     return redirect(request.url)
 
 

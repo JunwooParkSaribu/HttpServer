@@ -12,7 +12,7 @@
         {%for job_elem in job%}
             <b>{{job_elem}}</b>&emsp;&emsp;
         {%endfor%}
-        {%for i in range(0, len[job[0]])%}
+        {%for i in range(0, job_len[job[0]])%}
             <li>
                 {{job[0]}} : <a href={{files[job[0]][1][i]}}> {{files[job[0]][0][i]}} </a>
             </li>
