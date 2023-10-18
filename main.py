@@ -204,7 +204,7 @@ def rad51_classify():
                 z_projection = session['z_projection']
                 print(session['z_projection'])
                 nd2_file.save(f'./static/dummy/{filename}')
-                red, green, trans = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
+                red, green, trans, infos = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
                 static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
                                f'dummy/{filename.split(".nd2")[0]}_green.png',
                                f'dummy/{filename.split(".nd2")[0]}_trans.png',
@@ -216,7 +216,7 @@ def rad51_classify():
                 imageio.imwrite(f'./static/{static_urls[3]}', red + green + trans)
                 print('####################')
 
-                return render_template('rad51.html', images=static_urls, len=len(static_urls))
+                return render_template('rad51.html', images=static_urls, len=len(static_urls), infos=infos)
             except Exception as e:
                 print('Image create Err:', e)
                 return redirect(request.url)
