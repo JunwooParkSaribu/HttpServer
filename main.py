@@ -235,7 +235,7 @@ def rad51_classify():
             if 'score' in request.form:
                 score = int(request.form.get('score'))
                 if score < 0 or score > 100:
-                    score = 0
+                    score = 50
 
             try:
                 job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
@@ -283,24 +283,24 @@ def download_file():
                                               [session['username']])))
                 if len(all_jobs) == 0:
                     return render_template('download.html', jobs=None)
-
+                print(all)
                 ## maybe slower than resorting from the all_jobs rather than query for DB
-                finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
-                                              [session['username'], 'finished'])))
-                if len(finished_jobs) != 0:
-                    job_ids = finished_jobs[:, 0]
-                    for job_id in job_ids:
-                        href_path = []
-                        files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
-                        for file in files:
-                            href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
-                        job_dict[job_id] = [files, href_path.copy()]
-                        lens[job_id] = len(href_path)
+                #finished_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?) AND status=(?)",
+                #                              [session['username'], 'finished'])))
+                #if len(finished_jobs) != 0:
+                job_ids = all_jobs[:, 0]
+                for job_id in job_ids:
+                    href_path = []
+                    files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+                    for file in files:
+                        href_path.append(f'{SAVE_FOLDER}/{job_id}/{file}')
+                    job_dict[job_id] = [files, href_path.copy()]
+                    lens[job_id] = len(href_path)
             except Exception as e:
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-        return render_template('download.html', submit_job=True, all_jobs=all_jobs,
+        return render_template('download.html', submit_job=True, all_jobs=all_jobs, all_job_len=len(all_jobs),
                                finished_jobs=job_ids, files=job_dict, len=lens)
     return redirect(request.url)
 

@@ -7,18 +7,19 @@
 <body>
 <form method="get" enctype="multipart/form-data">
 {% if submit_job %}
-    <h3> {{all_jobs}}</h3>
-    {%for job_id in finished_jobs%}
-        {%for i in range(0, len[job_id])%}
+    <h2>JobId&emsp;User&emsp;Program&emsp;Status&emsp;StartTime&emsp;EndTime</h2>
+    {%for job in all_jobs%}
+        {%for job_elem in job%}
+            <b>{{job_elem}}</b>&emsp;&emsp;
+        {%endfor%}
+        {%for i in range(0, len[job[0]])%}
             <li>
-                {{job_id}} : {{files[job_id][0][i]}}
-                <a href={{files[job_id][1][i]}}> download </a>
+                {{job[0]}} : <a href={{files[job[0]][1][i]}}> {{files[job[0]][0][i]}} </a>
             </li>
             <br>
         {%endfor%}
         <br>
     {%endfor%}
-
 {% else %}
     <h1> Any jobs for the account. </h1>
 {% endif %}

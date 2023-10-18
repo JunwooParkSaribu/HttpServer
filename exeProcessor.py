@@ -48,8 +48,8 @@ if __name__ == '__main__':
     NB_PROCESS = 2
     job_id_index = -999
     job_type_index = -999
-    sleep_time = 30
-    q_size = 10
+    sleep_time = 10
+    q_size = 50
     process_line = {}
     jobs = []
     job_queue = queue.Queue(maxsize=q_size)
