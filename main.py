@@ -198,19 +198,17 @@ def rad51_classify():
                 nd2_file = request.files['filename']
                 filename = secure_filename(nd2_file.filename)
                 session['rad51_filename'] = filename
-                session['z_projection'] = request.form.get('z_projection')
-                z_projection = session['z_projection']
                 nd2_file.save(f'./static/dummy/{filename}')
-                red, green, trans, infos = read_nd2.read_nd2(f'./static/dummy/{filename}', option=z_projection)
+                reds, greens, transs, infos = read_nd2.read_nd2(f'./static/dummy/{filename}')
                 static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
                                f'dummy/{filename.split(".nd2")[0]}_green.png',
                                f'dummy/{filename.split(".nd2")[0]}_trans.png',
                                f'dummy/{filename.split(".nd2")[0]}_all.png'
                                ]
-                imageio.imwrite(f'./static/{static_urls[0]}', red)
-                imageio.imwrite(f'./static/{static_urls[1]}', green)
-                imageio.imwrite(f'./static/{static_urls[2]}', trans)
-                imageio.imwrite(f'./static/{static_urls[3]}', red + green + trans)
+                imageio.imwrite(f'./static/{static_urls[0]}', reds[0])
+                imageio.imwrite(f'./static/{static_urls[1]}', greens[0])
+                imageio.imwrite(f'./static/{static_urls[2]}', transs[0])
+                imageio.imwrite(f'./static/{static_urls[3]}', reds[0] + greens[0] + transs[0])
 
                 return render_template('rad51.html', images=static_urls, len=len(static_urls), infos=infos)
             except Exception as e:
@@ -219,8 +217,7 @@ def rad51_classify():
 
         if 'run_program' in request.form:
             job_type = 'Rad51_protein'
-            z_projection = session['z_projection']
-            score = 50
+            score = 90
 
             if len(request.form['job_id']) == 0:
                 print('Input job id')
@@ -231,7 +228,7 @@ def rad51_classify():
             if 'score' in request.form:
                 score = int(request.form.get('score'))
                 if score < 0 or score > 100:
-                    score = 50
+                    score = 90
 
             try:
                 job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
