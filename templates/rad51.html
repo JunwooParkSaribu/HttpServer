@@ -16,8 +16,9 @@
 </form>
 
 {% if infos %}
-image width, height = {{infos[0], infos[1]}} <small>pixels</small><br>
-pixel microns = {{infos[2]}} <br>
+image width, height = {{infos[1], infos[2]}} <small>pixels</small><br>
+pixel microns = {{infos[3]}} <br>
+z-depth = {{infos[0]}} <br>
 
 {% endif %}
 {% if images %}

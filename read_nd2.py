@@ -21,4 +21,4 @@ def read_nd2(filepath, option='mean'):
                 np.uint8)
             trans = np.array(np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=3) * 255).astype(
                 np.uint8)
-    return red, green, trans, (nd.metadata['width'], nd.metadata['height'], nd.metadata['pixel_microns'])
+    return red, green, trans, (red.shape[0], nd.metadata['width'], nd.metadata['height'], nd.metadata['pixel_microns'])
