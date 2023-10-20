@@ -200,15 +200,16 @@ def rad51_classify():
                 session['rad51_filename'] = filename
                 nd2_file.save(f'./static/dummy/{filename}')
                 reds, greens, transs, infos = read_nd2.read_nd2(f'./static/dummy/{filename}')
-                static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.png',
-                               f'dummy/{filename.split(".nd2")[0]}_green.png',
-                               f'dummy/{filename.split(".nd2")[0]}_trans.png',
-                               f'dummy/{filename.split(".nd2")[0]}_all.png'
+                static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.gif',
+                               f'dummy/{filename.split(".nd2")[0]}_green.gif',
+                               f'dummy/{filename.split(".nd2")[0]}_trans.gif',
+                               f'dummy/{filename.split(".nd2")[0]}_all.gif'
                                ]
-                imageio.imwrite(f'./static/{static_urls[0]}', reds[0])
-                imageio.imwrite(f'./static/{static_urls[1]}', greens[0])
-                imageio.imwrite(f'./static/{static_urls[2]}', transs[0])
-                imageio.imwrite(f'./static/{static_urls[3]}', reds[0] + greens[0] + transs[0])
+
+                imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=2, loop=3)
+                imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=2, loop=3)
+                imageio.mimsave(f'./static/{static_urls[2]}', transs, fps=2, loop=3)
+                imageio.mimsave(f'./static/{static_urls[3]}', reds + greens + transs, fps=2, loop=3)
 
                 return render_template('rad51.html', images=static_urls, len=len(static_urls), infos=infos)
             except Exception as e:
