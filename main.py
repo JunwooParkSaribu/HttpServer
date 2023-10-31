@@ -17,7 +17,7 @@ UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
-ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2'}
+ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2', 'czi'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
