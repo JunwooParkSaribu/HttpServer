@@ -2,6 +2,7 @@ from module import nd2
 import numpy as np
 import cv2
 from nd2reader import ND2Reader
+from czifile import CziFile
 
 
 def read_nd2(filepath, option='mean'):
@@ -22,3 +23,21 @@ def read_nd2(filepath, option='mean'):
             trans = np.array(np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=3) * 255).astype(
                 np.uint8)
     return red, green, trans, (red.shape[0], nd.metadata['width'], nd.metadata['height'], nd.metadata['pixel_microns'])
+
+
+def read_czi(filepath):
+    with CziFile("/mnt/c/Users/jwoo/Downloads/10-27-AiryScanProcess.czi") as czi:
+        img = czi.asarray()
+        print(img.shape)
+        nb_channel = img.shape[1]
+        z_depth = img.shape[2]
+        y_size = img.shape[4]
+        x_size = img.shape[3]
+        if img.shape[0] == 1 and img.shape[5] == 1:
+            img = img.reshape((nb_channel, z_depth, x_size, y_size))
+        else:
+            print('czi file array format recheck')
+            exit(1)
+        red = img[0]
+        green = img[1]
+    return red, green, (z_depth, x_size, y_size, 'fix later(pixel microns)')
