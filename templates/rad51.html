@@ -54,13 +54,13 @@ DyeId = {{info.dyeId}} <br>
 <br>
 
 {% if images %}
-    <div class="outsideWrapper">
     {%for i in range(0, len)%}
-        <div class="insideWrapper">
-            <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}" class="coveredImage">
+        <div class="outsideWrapper">
+            <div class="insideWrapper">
+                <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}" class="coveredImage">
+            </div>
         </div>
     {%endfor%}
-    </div>
 {% endif %}
 
 <p><b>Training data of current model(updated Oct 20, 2023)</b></p>
