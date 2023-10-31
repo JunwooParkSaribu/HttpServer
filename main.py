@@ -265,15 +265,25 @@ def rad51_classify():
     return render_template('rad51.html')
 
 
-@app.route('/download')
+@app.route('/download', methods=['GET', 'POST'])
 def download_file():
+    if request.method == 'POST':
+        try:
+            delete_job_id = request.form['delete_job_id'].strip().split('\u2003')[1]
+            query_db(f'DELETE FROM job WHERE job_id=(?)', [delete_job_id])
+            query_db(f'COMMIT')
+            shutil.rmtree(f'{UPLOAD_FOLDER}/{delete_job_id}', ignore_errors=True)
+            shutil.rmtree(f'{SAVE_FOLDER}/{delete_job_id}', ignore_errors=True)
+        except Exception as e:
+            print(e)
+            print('JOB delete ERR')
     if request.method == 'GET':
         with app.app_context():
             job_dict = dict()
             lens = dict()
             try:
                 all_jobs = np.array(list(query_db(f"SELECT * FROM job WHERE user_name=(?)",
-                                              [session['username']])))
+                                                  [session['username']])))
                 if len(all_jobs) == 0:
                     return render_template('download.html', jobs=None)
 
