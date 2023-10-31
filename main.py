@@ -200,28 +200,28 @@ def rad51_classify():
                 session['rad51_filename'] = filename
                 received_file.save(f'./static/dummy/{filename}')
                 if '.nd2' in filename:
-                    reds, greens, transs, infos = ReadImage.read_nd2(f'./static/dummy/{filename}')
+                    reds, greens, transs, info = ReadImage.read_nd2(f'./static/dummy/{filename}')
                     static_urls = [f'dummy/{filename.split(".nd2")[0]}_red.gif',
                                    f'dummy/{filename.split(".nd2")[0]}_green.gif',
                                    f'dummy/{filename.split(".nd2")[0]}_trans.gif',
                                    f'dummy/{filename.split(".nd2")[0]}_all.gif'
                                    ]
-                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=2, loop=3)
-                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=2, loop=3)
-                    imageio.mimsave(f'./static/{static_urls[2]}', transs, fps=2, loop=3)
-                    imageio.mimsave(f'./static/{static_urls[3]}', reds + greens + transs, fps=2, loop=3)
+                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=2, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=2, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[2]}', transs, fps=2, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[3]}', reds + greens + transs, fps=2, loop=2)
                 elif '.czi' in filename:
-                    reds, greens, infos = ReadImage.read_czi(f'./static/dummy/{filename}')
+                    reds, greens, info = ReadImage.read_czi(f'./static/dummy/{filename}')
                     static_urls = [f'dummy/{filename.split(".czi")[0]}_red.gif',
                                    f'dummy/{filename.split(".czi")[0]}_green.gif',
                                    f'dummy/{filename.split(".czi")[0]}_all.gif'
                                    ]
-                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=2, loop=3)
-                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=2, loop=3)
-                    imageio.mimsave(f'./static/{static_urls[3]}', reds + greens, fps=2, loop=3)
+                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=3, loop=1)
+                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=3, loop=1)
+                    imageio.mimsave(f'./static/{static_urls[2]}', reds + greens, fps=3, loop=1)
                 else:
                     return redirect(request.url)
-                return render_template('rad51.html', images=static_urls, len=len(static_urls), infos=infos)
+                return render_template('rad51.html', images=static_urls, len=len(static_urls), info=info)
             except Exception as e:
                 print('Image create Err:', e)
                 return redirect(request.url)

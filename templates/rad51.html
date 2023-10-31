@@ -15,12 +15,15 @@
     <input type="submit" value="Upload">
 </form>
 
-{% if infos %}
-image width, height = {{infos[1], infos[2]}} <small>pixels</small><br>
-pixel microns = {{infos[3]}} <br>
-z-depth = {{infos[0]}} <br>
-
+{% if info %}
+Image width, height = {{info.xSize, info.ySize}} <small>pixels</small><br>
+Pixel microns = {{info.pixelMicrons}} <br>
+Z-depth = {{info.zDepth}} <br>
+PixelType = {{info.pixelType}} <br>
+DyeName = {{info.dyName}} <br>
+DyeId = {{info.dyeId}} <br>
 {% endif %}
+
 {% if images %}
     <div class="outsideWrapper">
         <div class="insideWrapper">
@@ -48,12 +51,16 @@ z-depth = {{infos[0]}} <br>
 {% if job_submission %}
 <p> <b>Successfully job submitted.</b> </p>
 {% endif %}
-
 <br>
+
 {% if images %}
+    <div class="outsideWrapper">
     {%for i in range(0, len)%}
-        <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}">
+        <div class="insideWrapper">
+            <img id="{{i}}" src="{{ url_for('static', filename=images[i]) }}" class="coveredImage">
+        </div>
     {%endfor%}
+    </div>
 {% endif %}
 
 <p><b>Training data of current model(updated Oct 20, 2023)</b></p>

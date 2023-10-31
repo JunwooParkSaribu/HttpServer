@@ -22,22 +22,41 @@ def read_nd2(filepath, option='mean'):
                 np.uint8)
             trans = np.array(np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=3) * 255).astype(
                 np.uint8)
-    return red, green, trans, (red.shape[0], nd.metadata['width'], nd.metadata['height'], nd.metadata['pixel_microns'])
+    return red, green, trans, {'zDepth': red.shape[0], 'xSize': nd.metadata['width'], 'ySize': nd.metadata['height'],
+                               'pixelType': 'Unknown', 'dyeName': 'Unknown', 'dyeId': 'Unknown',
+                               'pixelMicrons': nd.metadata['pixel_microns']}
 
 
 def read_czi(filepath):
-    with CziFile("/mnt/c/Users/jwoo/Downloads/10-27-AiryScanProcess.czi") as czi:
+    with CziFile(filepath) as czi:
+        metadata = czi.metadata()
+        pixelType = metadata.split('<PixelType>')[1].split('</PixelType>')[0]
+        dyeName = metadata.split('<DyeName>')[1].split('</DyeName>')[0]
+        dyeId = metadata.split('<DyeId>')[1].split('</DyeId>')[0]
         img = czi.asarray()
-        print(img.shape)
         nb_channel = img.shape[1]
         z_depth = img.shape[2]
-        y_size = img.shape[4]
-        x_size = img.shape[3]
+        y_size = img.shape[3]
+        x_size = img.shape[4]
         if img.shape[0] == 1 and img.shape[5] == 1:
-            img = img.reshape((nb_channel, z_depth, x_size, y_size))
+            img = img.reshape((nb_channel, z_depth, y_size, x_size))
         else:
             print('czi file array format recheck')
             exit(1)
-        red = img[0]
-        green = img[1]
-    return red, green, (z_depth, x_size, y_size, 'fix later(pixel microns)')
+        reds = np.array(img[0]).astype(np.double)
+        greens = np.array(img[1]).astype(np.double)
+
+        for i, (r, g) in enumerate(zip(reds, greens)):
+            r_min = np.min(r)
+            r_max = np.max(r)
+            g_min = np.min(g)
+            g_max = np.max(g)
+            reds[i] = (r - r_min) / (r_max - r_min)
+            greens[i] = (g - g_min) / (r_max - r_min)
+
+        reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.uint8)
+        greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
+            np.uint8)
+
+    return reds, greens, {'zDepth': z_depth, 'xSize': x_size, 'ySize': y_size,
+                          'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown'}
