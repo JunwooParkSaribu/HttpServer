@@ -19,6 +19,15 @@
     <input type="submit" value="Upload">
 </form>
 
+{% if job_exist %}
+<p> There is already a same job id on the server, please choose another job id. </p>
+{% endif %}
+
+{% if job_submission %}
+<p> <b>Successfully job submitted.</b> </p>
+{% endif %}
+<br>
+
 <form method="post">
     <p><input type="submit" value="Rad51" name="rad51">
 </form>

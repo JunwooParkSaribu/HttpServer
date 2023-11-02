@@ -176,6 +176,7 @@ def upload_files():
                 print(file)
             else:
                 print('Not allowed file type', file)
+        return render_template('upload.html', job_submission=True)
     job_id = None
     return render_template('upload.html')
 
