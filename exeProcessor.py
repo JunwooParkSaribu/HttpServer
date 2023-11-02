@@ -122,18 +122,15 @@ if __name__ == '__main__':
                 # next_job_id is for the path of configuration file
                 if next_job_type == 'H2B':
                     # ERR on mkdir is already checked on server script.
-                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
                     proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/HTC/h2b_prediction.py',
                                         f'/mnt/c/Users/jwoo/Desktop/HttpServer/data/{next_job_id}'])
 
                 elif next_job_type == 'Rad51':
                     # ERR on mkdir is already checked on server script.
-                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
                     proc = run_command(['./rad51.exe', f'{next_job_id}'])
 
                 elif next_job_type == 'Rad51_protein':
                     # ERR on mkdir is already checked on server script.
-                    os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
                     proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/nuclei_test/prediction.py', f'{next_job_id}'])
 
                 cursor.execute("UPDATE job SET status=? WHERE job_id=?;", ['running', next_job_id])

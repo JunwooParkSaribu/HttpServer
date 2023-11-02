@@ -178,8 +178,9 @@ def upload_files():
         try:
             job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
             os.mkdir(f'{UPLOAD_FOLDER}/{job_id}')
+            os.mkdir(f'{SAVE_FOLDER}/{job_id}')
             if job_type == 'H2B':
-                configure_setting(save_path=UPLOAD_FOLDER, job_id=job_id, cutoff=request.form['trajectory_length'])
+                configure_setting(save_path=SAVE_FOLDER, job_id=job_id, cutoff=request.form['trajectory_length'])
         except Exception as e:
             print(e)
             print('Job_Id is already exist')
@@ -271,6 +272,7 @@ def rad51_classify():
             try:
                 job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
                 os.mkdir(f'{UPLOAD_FOLDER}/{job_id}')
+                os.mkdir(f'{SAVE_FOLDER}/{job_id}')
             except Exception as e:
                 print(e)
                 print('Job_Id is already exist')
