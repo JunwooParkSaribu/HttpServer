@@ -216,9 +216,9 @@ def rad51_classify():
                                    f'dummy/{filename.split(".czi")[0]}_green.gif',
                                    f'dummy/{filename.split(".czi")[0]}_all.gif'
                                    ]
-                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=3, loop=1)
-                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=3, loop=1)
-                    imageio.mimsave(f'./static/{static_urls[2]}', reds + greens, fps=3, loop=1)
+                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=3, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=3, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[2]}', reds + greens, fps=3, loop=2)
                 else:
                     return redirect(request.url)
                 return render_template('rad51.html', images=static_urls, len=len(static_urls), info=info)
