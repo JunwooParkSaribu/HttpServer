@@ -113,7 +113,12 @@ if __name__ == '__main__':
                 elif running_process.poll() == 1:
                     print('Process ERR(1): ', running_process)
                     cursor.execute("UPDATE job SET status=?, end_time=? WHERE job_id=?;",
-                                   ['canceled', current_time, process_line[running_process]])
+                                   ['canceled(Unexpected Err)', current_time, process_line[running_process]])
+                    end_process.append(running_process)
+                elif running_process.poll() == 9:
+                    print('Process ERR(1): ', running_process)
+                    cursor.execute("UPDATE job SET status=?, end_time=? WHERE job_id=?;",
+                                   ['canceled(Out of Memory)', current_time, process_line[running_process]])
                     end_process.append(running_process)
             except Exception as e:
                 print(e)
