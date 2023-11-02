@@ -1,9 +1,9 @@
 from module import nd2
 import numpy as np
-import cv2
 from nd2reader import ND2Reader
 from czifile import CziFile
 import scipy
+import skimage
 
 
 def read_nd2(filepath, option='mean'):
@@ -25,7 +25,7 @@ def read_nd2(filepath, option='mean'):
                 np.uint8)
     return red, green, trans, {'zDepth': red.shape[0], 'xSize': nd.metadata['width'], 'ySize': nd.metadata['height'],
                                'pixelType': 'Unknown', 'dyeName': 'Unknown', 'dyeId': 'Unknown',
-                               'pixelMicrons': nd.metadata['pixel_microns']}
+                               'pixelMicrons': nd.metadata['pixel_microns'], 'time': 'Unknown'}
 
 
 def read_czi(filepath):
@@ -34,26 +34,36 @@ def read_czi(filepath):
         pixelType = metadata.split('<PixelType>')[1].split('</PixelType>')[0]
         dyeName = metadata.split('<DyeName>')[1].split('</DyeName>')[0]
         dyeId = metadata.split('<DyeId>')[1].split('</DyeId>')[0]
+        time = metadata.split('<Time>')[1].split('</Time>')[0]
+        del metadata
+
         img = czi.asarray()
         nb_channel = img.shape[1]
         z_depth = img.shape[2]
-        y_size = img.shape[3]
-        x_size = img.shape[4]
-        zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
-        one_base = np.ones((y_size, x_size), dtype=np.uint8)
+        original_y_size = img.shape[3]
+        original_x_size = img.shape[4]
+        downsampling_x = int(original_x_size / 256.)
+        downsampling_y = int(original_y_size / 256.)
+
         if img.shape[0] == 1 and img.shape[5] == 1:
-            img = img.reshape((nb_channel, z_depth, y_size, x_size))
+            img = img.reshape((nb_channel, z_depth, original_y_size, original_x_size))
         else:
             print('czi file array format recheck')
             exit(1)
         reds = np.array(img[0]).astype(np.double)
         greens = np.array(img[1]).astype(np.double)
+        reds = skimage.measure.block_reduce(reds, (1, downsampling_x, downsampling_y), np.max)
+        greens = skimage.measure.block_reduce(greens, (1, downsampling_x, downsampling_y), np.max)
+        y_size = reds.shape[1]
+        x_size = reds.shape[2]
+        zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
+        one_base = np.ones((y_size, x_size), dtype=np.uint8)
+        del img
 
         r_max = np.max(reds, axis=(1, 2))
         g_max = np.max(greens, axis=(1, 2))
         g_max = np.mean(g_max)
         r_max = np.mean(r_max)
-
         for i, (r, g) in enumerate(zip(reds, greens)):
             r_min = np.min(r)
             g_min = np.min(g)
@@ -69,9 +79,11 @@ def read_czi(filepath):
             g = np.minimum(g, one_base)
             reds[i] = r
             greens[i] = g
-        reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.int8)
-        greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
-            np.int8)
+        reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)],
+                                 axis=3) * 255, dtype=np.uint8)
+        greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)],
+                                   axis=3) * 255, dtype=np.uint8)
 
-    return reds, greens, {'zDepth': z_depth, 'xSize': x_size, 'ySize': y_size,
-                          'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown'}
+    return reds, greens, {'zDepth': z_depth, 'xSize': original_x_size, 'ySize': original_y_size,
+                          'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown',
+                          'time': time}

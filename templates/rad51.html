@@ -9,19 +9,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
-
+<h3><b>Required channel order: nd2(nuclei, rad51, trans), czi(nuclei, rad51)</b></h3>
 <form method="post" enctype="multipart/form-data">
     <input type="file" id="nd2" name="filename" size="50">
     <input type="submit" value="Upload">
 </form>
 
 {% if info %}
-Image width, height = {{info.xSize, info.ySize}} <small>pixels</small><br>
-Pixel microns = {{info.pixelMicrons}} <br>
-Z-depth = {{info.zDepth}} <br>
-PixelType = {{info.pixelType}} <br>
-DyeName = {{info.dyeName}} <br>
-DyeId = {{info.dyeId}} <br>
+Image width, height: {{info.xSize}}x{{info.ySize}} <small>pixels</small><br>
+Pixel microns: {{info.pixelMicrons}} <br>
+Z-depth: {{info.zDepth}} <br>
+PixelType: {{info.pixelType}} <br>
+DyeName: {{info.dyeName}} <br>
+DyeId: {{info.dyeId}} <br>
+Acquisition date: {{info.time}} <br>
 {% endif %}
 
 {% if images %}
@@ -63,12 +64,13 @@ DyeId = {{info.dyeId}} <br>
     {%endfor%}
 {% endif %}
 
-<p><b>Training data of current model(updated Oct 20, 2023)</b></p>
-2023_06_29_xy10Pmagni2-rad51gfpNup_011<br>
-2023_06_29_xy12Pmagni2-rad51gfpNup_013<br>
-2023_06_29_xy14Pmagni2-rad51gfpNup_015<br>
-2023_06_29_xy17Pmagni2-rad51gfpNup_020<br>
-2023_06_29_xy26Pmagni2-rad51gfpNup_027<br>
+<p><b>Training data list of the current model(updated Nov 2, 2023)</b></p>
+2023_06_29_xy10Pmagni2-rad51gfpNup_011.nd2<br>
+2023_06_29_xy12Pmagni2-rad51gfpNup_013.nd2<br>
+2023_06_29_xy14Pmagni2-rad51gfpNup_015.nd2<br>
+2023_06_29_xy17Pmagni2-rad51gfpNup_020.nd2<br>
+2023_06_29_xy26Pmagni2-rad51gfpNup_027.nd2<br>
+10-27-AiryScanProcess.czi<br>
 
 <p><b>References</b></p>
 <p>Mask R-CNN, Kaiming H. et al. <a href="https://doi.org/10.48550/arXiv.1703.06870">https://doi.org/10.48550/arXiv.1703.06870</a></p>
