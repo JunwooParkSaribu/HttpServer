@@ -6,36 +6,14 @@ import time
 import queue
 import os
 
-LINUX_PATH = '/home/junwoo'
-WINDOWS_SERVER_PATH = '/mnt/c/Users/jwoo/Desktop/HttpServer'
 DATA_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
 DATA_BASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
+WINDOWS_SERVER_PATH = '/mnt/c/Users/jwoo/Desktop/HttpServer'
+LINUX_PATH = '/home/junwoo'
 
 SUBMITTIME_INDEX = -999
 NB_PROCESS = 1
-
-
-def configure_setting(data_path, save_path, job_id) -> bool:
-    with open(f'{save_path}/{job_id}/config.txt', 'w') as f:
-        input_str = ''
-        input_str += f'data = {WINDOWS_SERVER_PATH}/data/{job_id}\n'
-        input_str += f'save_dir = {WINDOWS_SERVER_PATH}/save/{job_id}\n'
-        input_str += f'model_dir = {LINUX_PATH}/HTC/model/histoneModel\n'
-        input_str += f'cut_off = 8\n'
-        input_str += f'all = False\n'
-        input_str += f'makeImage = True\n'
-        input_str += f'postProcessing = True\n'
-
-        input_str += '\n'
-        input_str += 'immobile_cutoff = 5\n'
-        input_str += 'hybrid_cutoff = 12\n'
-        input_str += 'amp = 2\n'
-        input_str += 'nChannel = 3\n'
-        input_str += 'batch_size = 16\n'
-        input_str += 'group_size = 160\n'
-        f.write(input_str)
-    return True
 
 
 def get_date_from_tuple(tuple):
@@ -145,7 +123,7 @@ if __name__ == '__main__':
                 if next_job_type == 'H2B':
                     # ERR on mkdir is already checked on server script.
                     os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
-                    if configure_setting(data_path=DATA_FOLDER, save_path=SAVE_FOLDER, job_id=next_job_id):
+                    if configure_setting(save_path=SAVE_FOLDER, job_id=next_job_id):
                         proc = run_command(
                             ['wsl', 'python3', f'{LINUX_PATH}/HTC/h2b_prediction.py',
                              f'/mnt/c/Users/jwoo/Desktop/HttpServer/save/{next_job_id}'])

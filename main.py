@@ -13,6 +13,8 @@ import glob
 import shutil
 
 
+WINDOWS_SERVER_PATH = '/mnt/c/Users/jwoo/Desktop/HttpServer'
+LINUX_PATH = '/home/junwoo'
 UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
@@ -23,6 +25,28 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 150 * 1000 * 1000 * 1000 * 1000
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+
+
+def configure_setting(save_path, job_id, cutoff='8') -> bool:
+    with open(f'{save_path}/{job_id}/config.txt', 'w') as f:
+        input_str = ''
+        input_str += f'data = {WINDOWS_SERVER_PATH}/data/{job_id}\n'
+        input_str += f'save_dir = {WINDOWS_SERVER_PATH}/save/{job_id}\n'
+        input_str += f'model_dir = {LINUX_PATH}/HTC/model/histoneModel\n'
+        input_str += f'cut_off = {cutoff}\n'
+        input_str += f'all = False\n'
+        input_str += f'makeImage = True\n'
+        input_str += f'postProcessing = True\n'
+
+        input_str += '\n'
+        input_str += 'immobile_cutoff = 5\n'
+        input_str += 'hybrid_cutoff = 12\n'
+        input_str += 'amp = 2\n'
+        input_str += 'nChannel = 3\n'
+        input_str += 'batch_size = 16\n'
+        input_str += 'group_size = 160\n'
+        f.write(input_str)
+    return True
 
 
 def allowed_file(filename):
@@ -154,6 +178,8 @@ def upload_files():
         try:
             job_exist = query_db(f'SELECT COUNT() FROM job WHERE job_id = (?)', [job_id])
             os.mkdir(f'{UPLOAD_FOLDER}/{job_id}')
+            if job_type == 'H2B':
+                configure_setting(save_path=SAVE_FOLDER, job_id=job_id, cutoff=request.form['trajectory_length'])
         except Exception as e:
             print(e)
             print('Job_Id is already exist')
