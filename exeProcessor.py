@@ -123,10 +123,8 @@ if __name__ == '__main__':
                 if next_job_type == 'H2B':
                     # ERR on mkdir is already checked on server script.
                     os.mkdir(f'{SAVE_FOLDER}/{next_job_id}')
-                    if configure_setting(save_path=SAVE_FOLDER, job_id=next_job_id):
-                        proc = run_command(
-                            ['wsl', 'python3', f'{LINUX_PATH}/HTC/h2b_prediction.py',
-                             f'/mnt/c/Users/jwoo/Desktop/HttpServer/save/{next_job_id}'])
+                    proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/HTC/h2b_prediction.py',
+                                        f'/mnt/c/Users/jwoo/Desktop/HttpServer/save/{next_job_id}'])
 
                 elif next_job_type == 'Rad51':
                     # ERR on mkdir is already checked on server script.
