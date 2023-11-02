@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 if next_job_type == 'H2B':
                     # ERR on mkdir is already checked on server script.
                     proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/HTC/h2b_prediction.py',
-                                        f'/mnt/c/Users/jwoo/Desktop/HttpServer/data/{next_job_id}'])
+                                        f'/mnt/c/Users/jwoo/Desktop/HttpServer/save/{next_job_id}'])
 
                 elif next_job_type == 'Rad51':
                     # ERR on mkdir is already checked on server script.
