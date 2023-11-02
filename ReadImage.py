@@ -3,6 +3,7 @@ import numpy as np
 import cv2
 from nd2reader import ND2Reader
 from czifile import CziFile
+import scipy
 
 
 def read_nd2(filepath, option='mean'):
@@ -38,6 +39,8 @@ def read_czi(filepath):
         z_depth = img.shape[2]
         y_size = img.shape[3]
         x_size = img.shape[4]
+        zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
+        one_base = np.ones((y_size, x_size), dtype=np.uint8)
         if img.shape[0] == 1 and img.shape[5] == 1:
             img = img.reshape((nb_channel, z_depth, y_size, x_size))
         else:
@@ -46,17 +49,29 @@ def read_czi(filepath):
         reds = np.array(img[0]).astype(np.double)
         greens = np.array(img[1]).astype(np.double)
 
+        r_max = np.max(reds, axis=(1, 2))
+        g_max = np.max(greens, axis=(1, 2))
+        g_max = np.mean(g_max)
+        r_max = np.mean(r_max)
+
         for i, (r, g) in enumerate(zip(reds, greens)):
             r_min = np.min(r)
-            r_max = np.max(r)
             g_min = np.min(g)
-            g_max = np.max(g)
-            reds[i] = (r - r_min) / (r_max - r_min)
-            greens[i] = (g - g_min) / (r_max - r_min)
-
-        reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.uint8)
+            r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
+            g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
+            r = r - r_mode
+            g = g - g_mode
+            r = np.maximum(r, zero_base)
+            g = np.maximum(g, zero_base)
+            r = r / (r_max - r_min)
+            g = g / (g_max - g_min)
+            r = np.minimum(r, one_base)
+            g = np.minimum(g, one_base)
+            reds[i] = r
+            greens[i] = g
+        reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.int8)
         greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
-            np.uint8)
+            np.int8)
 
     return reds, greens, {'zDepth': z_depth, 'xSize': x_size, 'ySize': y_size,
                           'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown'}
