@@ -86,17 +86,17 @@ if __name__ == '__main__':
                 if running_process.poll() == 0:
                     print('Process finished for the job : ', process_line[running_process])
                     cursor.execute("UPDATE job SET status=?, end_time=? WHERE job_id=?;",
-                                   ['finished', current_time, process_line[running_process]])
+                                   ['Finished', current_time, process_line[running_process]])
                     end_process.append(running_process)
                 elif running_process.poll() == 1:
                     print('Process ERR(1): ', running_process)
                     cursor.execute("UPDATE job SET status=?, end_time=? WHERE job_id=?;",
-                                   ['canceled(1, Process Err)', current_time, process_line[running_process]])
+                                   ['Canceled(1, Process Err)', current_time, process_line[running_process]])
                     end_process.append(running_process)
                 elif running_process.poll() == 9:
                     print('Process ERR(1): ', running_process)
                     cursor.execute("UPDATE job SET status=?, end_time=? WHERE job_id=?;",
-                                   ['canceled(9, Out of Memory)', current_time, process_line[running_process]])
+                                   ['Canceled(9, Out of Memory)', current_time, process_line[running_process]])
                     end_process.append(running_process)
             except Exception as e:
                 print(e)
