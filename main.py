@@ -21,7 +21,7 @@ UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
-ALLOWED_EXTENSIONS = {'tif', 'trxyt', 'nd2', 'czi'}
+ALLOWED_EXTENSIONS = {'tif', 'trx', 'trxyt', 'nd2', 'czi'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -53,7 +53,7 @@ def configure_setting(save_path, job_id, cutoff='8') -> bool:
 
 def allowed_file(filename):
     return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+        filename.rsplit('.', 1)[-1].lower() in ALLOWED_EXTENSIONS
 
 
 def get_db():
@@ -311,7 +311,7 @@ def download_file():
     if request.method == 'POST':
         if 'delete_job_id' in request.form:
             try:
-                delete_job_id = request.form['delete_job_id'].strip().split('\u2003')[1]
+                delete_job_id = request.form['delete_job_id'].strip().split('delete')[1].strip()
                 query_db(f'DELETE FROM job WHERE job_id=(?)', [delete_job_id])
                 query_db(f'COMMIT')
                 shutil.rmtree(f'{UPLOAD_FOLDER}/{delete_job_id}', ignore_errors=True)
@@ -354,18 +354,17 @@ def download_file():
 
 @app.route('/save/<job_id>/<filename>', methods=['GET'])
 def download(job_id, filename):
-    print(filename)
     return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=filename)
 
 
 @app.route('/save/<job_id>', methods=['GET'])
 def download_zip(job_id):
-    with tarfile.open(f'{SAVE_FOLDER}/{job_id}/{job_id}.tar', 'a') as myzip:
-        files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+    files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+    with tarfile.open(f'{SAVE_FOLDER}/{job_id}/{job_id}_all.tar', 'w:') as myzip:
         for file in files:
             if '.tar' not in file:
                 myzip.add(f'{SAVE_FOLDER}/{job_id}/{file}', arcname=file)
-    return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=f'{job_id}.tar')
+    return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=f'{job_id}_all.tar')
 
 
 if __name__ == '__main__':
