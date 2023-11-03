@@ -301,14 +301,11 @@ def rad51_classify():
                 input_str += f'score = {str(score)}\n'
                 f.write(input_str)
 
+            x = session['rad51_filename'].split('.')[0:-1]
+            dummyname = ''
+            for i in range(len(x)):
+                dummyname += x[i]
             for dummy in os.scandir(f'./static/dummy'):
-                print(dummy.path)
-                print(session['rad51_filename'])
-                x = session['rad51_filename'].split('.')[0:-1]
-                dummyname = ''
-                for i in range(len(x)):
-                    dummyname += x[i]
-                print(dummyname)
                 if dummyname in dummy.path:
                     os.remove(dummy.path)
             session.pop('rad51_filename')
