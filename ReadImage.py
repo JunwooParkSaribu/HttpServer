@@ -9,19 +9,54 @@ import skimage
 def read_nd2(filepath, option='mean'):
     with nd2.ND2File(filepath) as ndfile:
         with ND2Reader(filepath) as nd:
-            green = np.array([np.array(ndfile)[x][0] for x in range(ndfile.shape[0])]).astype(np.double)
-            red = np.array([np.array(ndfile)[x][1] for x in range(ndfile.shape[0])]).astype(np.double)
-            trans = np.array([np.array(ndfile)[x][2] for x in range(ndfile.shape[0])]).astype(np.double)
+            greens = np.array([np.array(ndfile)[x][0] for x in range(ndfile.shape[0])]).astype(np.double)
+            reds = np.array([np.array(ndfile)[x][1] for x in range(ndfile.shape[0])]).astype(np.double)
+            transs = np.array([np.array(ndfile)[x][2] for x in range(ndfile.shape[0])]).astype(np.double)
 
-            for i, (r, g, t) in enumerate(zip(red, green, trans)):
-                red[i] = r / np.max(r)
-                green[i] = g / np.max(g)
-                trans[i] = t / np.max(t)
+            r_max = np.mean(np.max(reds, axis=(1, 2)))
+            g_max = np.mean(np.max(greens, axis=(1, 2)))
+            t_max = np.mean(np.max(transs, axis=(1, 2)))
 
-            red = np.array(np.stack([red, np.zeros(red.shape), np.zeros(red.shape)], axis=3) * 255).astype(np.uint8)
-            green = np.array(np.stack([np.zeros(green.shape), green, np.zeros(green.shape)], axis=3) * 255).astype(
+            original_y_size = reds.shape[1]
+            original_x_size = reds.shape[2]
+            downsampling_x = int(original_x_size / 256.)
+            downsampling_y = int(original_y_size / 256.)
+
+            reds = skimage.measure.block_reduce(reds, (1, downsampling_x, downsampling_y), np.max)
+            greens = skimage.measure.block_reduce(greens, (1, downsampling_x, downsampling_y), np.max)
+            transs = skimage.measure.block_reduce(transs, (1, downsampling_x, downsampling_y), np.max)
+            y_size = reds.shape[1]
+            x_size = reds.shape[2]
+            zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
+            one_base = np.ones((y_size, x_size), dtype=np.uint8)
+
+            for i, (r, g, t) in enumerate(zip(reds, greens, transs)):
+                r_min = np.min(r)
+                g_min = np.min(g)
+                t_min = np.min(t)
+                r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
+                g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
+                t_mode = scipy.stats.mode(t.reshape(t.shape[0] * t.shape[1]), keepdims=False)[0]
+                r = r - r_mode
+                g = g - g_mode
+                t = t - t_mode
+                r = np.maximum(r, zero_base)
+                g = np.maximum(g, zero_base)
+                t = np.maximum(t, zero_base)
+                r = r / (r_max - r_min)
+                g = g / (g_max - g_min)
+                t = t / (t_max - t_min)
+                r = np.minimum(r, one_base)
+                g = np.minimum(g, one_base)
+                t = np.minimum(t, one_base)
+                reds[i] = r
+                greens[i] = g
+                transs[i] = t
+
+            red = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.uint8)
+            green = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
                 np.uint8)
-            trans = np.array(np.stack([np.zeros(trans.shape), np.zeros(trans.shape), trans], axis=3) * 255).astype(
+            trans = np.array(np.stack([np.zeros(transs.shape), np.zeros(transs.shape), transs], axis=3) * 255).astype(
                 np.uint8)
     return red, green, trans, {'zDepth': red.shape[0], 'xSize': nd.metadata['width'], 'ySize': nd.metadata['height'],
                                'pixelType': 'Unknown', 'dyeName': 'Unknown', 'dyeId': 'Unknown',

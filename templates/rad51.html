@@ -11,8 +11,7 @@
 <body>
 <h3><b>Required channel order: nd2(nuclei, rad51, trans), czi(nuclei, rad51)</b></h3>
 <form method="post" enctype="multipart/form-data">
-    <input type="file" id="nd2" name="filename" size="50">
-    <input type="submit" value="Upload">
+    <input type="file" id="nd2" name="filename" size="50" onchange="javascript:this.form.submit();">
 </form>
 
 {% if info %}
@@ -42,7 +41,7 @@ Acquisition date: {{info.time}} <br>
     <input type="number" id="score" name="score" min="0" max="100" value="90">
     </p>
     <script src="/static/draw.js"></script>
-    <button type="submit" name="run_program">Run</button>
+    <button type="submit" name="run_program">Upload</button>
 </form>
 
 {% if job_exist %}
