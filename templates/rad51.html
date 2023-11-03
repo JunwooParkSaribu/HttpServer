@@ -48,6 +48,10 @@ Acquisition date: {{info.time}} <br>
 <p> There is already a same job id on the server, please choose another job id. </p>
 {% endif %}
 
+{% if no_file %}
+<p> <b>There is no selected file.</b> </p>
+{% endif %}
+
 {% if job_submission %}
 <p> <b>Successfully job submitted.</b> </p>
 {% endif %}

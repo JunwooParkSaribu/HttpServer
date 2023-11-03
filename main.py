@@ -257,6 +257,9 @@ def rad51_classify():
                 return redirect(request.url)
 
         if 'run_program' in request.form:
+            if 'rad51_filename' not in session:
+                return render_template('rad51.html', no_file=True)
+
             job_type = 'Rad51_protein'
             score = 90
 
@@ -299,8 +302,16 @@ def rad51_classify():
                 f.write(input_str)
 
             for dummy in os.scandir(f'./static/dummy'):
-                os.remove(dummy.path)
-
+                print(dummy.path)
+                print(session['rad51_filename'])
+                x = session['rad51_filename'].split('.')[0:-1]
+                dummyname = ''
+                for i in range(len(x)):
+                    dummyname += x[i]
+                print(dummyname)
+                if dummyname in dummy.path:
+                    os.remove(dummy.path)
+            session.pop('rad51_filename')
             return render_template('rad51.html', job_submission=True)
     job_id = None
     return render_template('rad51.html')
