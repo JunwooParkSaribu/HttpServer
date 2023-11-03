@@ -7,7 +7,7 @@
 <body>
 <form method="get" style='display: inline;'>
 {% if submit_job %}
-    <h2>JobId&emsp;User&emsp;Program&emsp;Status&emsp;StartTime&emsp;EndTime</h2>
+    <h2>JobId&emsp;User&emsp;Program&emsp;Status&emsp;SubmissionTime&emsp;FinishTime</h2>
     {%for job in all_jobs%}
         {%for job_elem in job%}
             <b>{{job_elem}}</b>&emsp;&emsp;
