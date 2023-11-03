@@ -1,4 +1,6 @@
 import os
+from zipfile import ZipFile
+import tarfile
 from flask import Flask, flash, request, redirect, url_for, render_template, send_from_directory
 from markupsafe import escape
 from werkzeug.utils import secure_filename
@@ -307,15 +309,17 @@ def rad51_classify():
 @app.route('/download', methods=['GET', 'POST'])
 def download_file():
     if request.method == 'POST':
-        try:
-            delete_job_id = request.form['delete_job_id'].strip().split('\u2003')[1]
-            query_db(f'DELETE FROM job WHERE job_id=(?)', [delete_job_id])
-            query_db(f'COMMIT')
-            shutil.rmtree(f'{UPLOAD_FOLDER}/{delete_job_id}', ignore_errors=True)
-            shutil.rmtree(f'{SAVE_FOLDER}/{delete_job_id}', ignore_errors=True)
-        except Exception as e:
-            print(e)
-            print('JOB delete ERR')
+        if 'delete_job_id' in request.form:
+            try:
+                delete_job_id = request.form['delete_job_id'].strip().split('\u2003')[1]
+                query_db(f'DELETE FROM job WHERE job_id=(?)', [delete_job_id])
+                query_db(f'COMMIT')
+                shutil.rmtree(f'{UPLOAD_FOLDER}/{delete_job_id}', ignore_errors=True)
+                shutil.rmtree(f'{SAVE_FOLDER}/{delete_job_id}', ignore_errors=True)
+            except Exception as e:
+                print(e)
+                print('JOB delete ERR')
+
     if request.method == 'GET':
         with app.app_context():
             job_dict = dict()
@@ -342,13 +346,26 @@ def download_file():
                 print(e)
                 print('JOB fetching ERR')
                 return render_template('download.html', jobs=None)
-        return render_template('download.html', submit_job=True, all_jobs=all_jobs, files=job_dict, job_len=lens)
+        return render_template('download.html',
+                               submit_job=True, all_jobs=all_jobs, files=job_dict, job_len=lens,
+                               save_path=f'{SAVE_FOLDER}/', job_ids=job_ids)
     return redirect(request.url)
 
 
-@app.route('/save/<job_id>/<filename>', methods=['GET', 'POST'])
+@app.route('/save/<job_id>/<filename>', methods=['GET'])
 def download(job_id, filename):
+    print(filename)
     return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=filename)
+
+
+@app.route('/save/<job_id>', methods=['GET'])
+def download_zip(job_id):
+    with tarfile.open(f'{SAVE_FOLDER}/{job_id}/{job_id}.tar', 'a') as myzip:
+        files = os.listdir(f'{SAVE_FOLDER}/{job_id}')
+        for file in files:
+            if '.tar' not in file:
+                myzip.add(f'{SAVE_FOLDER}/{job_id}/{file}', arcname=file)
+    return send_from_directory(directory=f'{SAVE_FOLDER}/{job_id}', path=f'{job_id}.tar')
 
 
 if __name__ == '__main__':

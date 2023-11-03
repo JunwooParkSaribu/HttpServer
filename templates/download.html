@@ -16,6 +16,9 @@
         <form method="post" style="display: inline;">
             <input type="submit" value=delete&emsp;{{job[0]}} name="delete_job_id">
         </form>
+
+        <a href={{save_path}}{{job[0]}}>download all</a>
+
         <form method="get" style='display: inline;'>
         {%for i in range(0, job_len[job[0]])%}
             <li>
