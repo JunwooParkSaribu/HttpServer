@@ -29,7 +29,7 @@ app.config['MAX_CONTENT_LENGTH'] = 150 * 1000 * 1000 * 1000 * 1000
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
-def configure_setting(save_path, job_id, cutoff='8') -> bool:
+def configure_setting(save_path, job_id, cutoff='8', post_processing='True') -> bool:
     with open(f'{save_path}/{job_id}/config.txt', 'w') as f:
         input_str = ''
         input_str += f'data = {WINDOWS_SERVER_PATH}/data/{job_id}\n'
@@ -38,7 +38,7 @@ def configure_setting(save_path, job_id, cutoff='8') -> bool:
         input_str += f'cut_off = {cutoff}\n'
         input_str += f'all = False\n'
         input_str += f'makeImage = True\n'
-        input_str += f'postProcessing = True\n'
+        input_str += f'postProcessing = {post_processing}\n'
 
         input_str += '\n'
         input_str += 'immobile_cutoff = 5\n'
@@ -182,7 +182,10 @@ def upload_files():
             os.mkdir(f'{UPLOAD_FOLDER}/{job_id}')
             os.mkdir(f'{SAVE_FOLDER}/{job_id}')
             if job_type == 'H2B':
-                configure_setting(save_path=SAVE_FOLDER, job_id=job_id, cutoff=request.form['trajectory_length'])
+                post_processing = 'True' if request.form['post_processing'].lower() == 'on' else 'False'
+                configure_setting(save_path=SAVE_FOLDER, job_id=job_id,
+                                  cutoff=request.form['trajectory_length'],
+                                  post_processing=post_processing)
         except Exception as e:
             print(e)
             print('Job_Id is already exist')
