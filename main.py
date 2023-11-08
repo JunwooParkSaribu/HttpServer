@@ -182,7 +182,7 @@ def upload_files():
             os.mkdir(f'{UPLOAD_FOLDER}/{job_id}')
             os.mkdir(f'{SAVE_FOLDER}/{job_id}')
             if job_type == 'H2B':
-                post_processing = 'True' if request.form['post_processing'].lower() == 'on' else 'False'
+                post_processing = 'True' if 'post_processing' in request.form else 'False'
                 configure_setting(save_path=SAVE_FOLDER, job_id=job_id,
                                   cutoff=request.form['trajectory_length'],
                                   post_processing=post_processing)
