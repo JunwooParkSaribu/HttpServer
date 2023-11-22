@@ -131,7 +131,7 @@ if __name__ == '__main__':
 
                 elif next_job_type == 'Rad51_protein':
                     # ERR on mkdir is already checked on server script.
-                    proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/nuclei_test/prediction.py', f'{next_job_id}'])
+                    proc = run_command(['wsl', 'python3', f'{LINUX_PATH}/Rad51_RCNN/prediction.py', f'{next_job_id}'])
 
                 cursor.execute("UPDATE job SET status=? WHERE job_id=?;", ['running', next_job_id])
                 process_line[proc] = next_job_id
