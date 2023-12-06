@@ -82,7 +82,6 @@ if __name__ == '__main__':
         """
         for running_process in process_line:
             try:
-                print(running_process.poll())
                 current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 if running_process.poll() is None:
                     continue
