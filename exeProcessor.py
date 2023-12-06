@@ -13,7 +13,7 @@ WINDOWS_SERVER_PATH = '/mnt/c/Users/jwoo/Desktop/HttpServer'
 LINUX_PATH = '/home/junwoo'
 
 SUBMITTIME_INDEX = -999
-NB_PROCESS = 1
+NB_PROCESS = 2
 
 
 def get_date_from_tuple(tuple):
