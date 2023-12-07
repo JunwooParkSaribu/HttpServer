@@ -21,7 +21,7 @@ UPLOAD_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'save'
 MODEL_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/model'
 DATABASE = 'C:/Users/jwoo/Desktop/HttpServer/fiona.db'
-ALLOWED_EXTENSIONS = {'tif', 'trx', 'trxyt', 'nd2', 'czi'}
+ALLOWED_EXTENSIONS = {'tif', 'trx', 'trxyt', 'nd2', 'czi', 'tiff'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -248,6 +248,15 @@ def rad51_classify():
                     static_urls = [f'dummy/{filename.split(".czi")[0]}_red.gif',
                                    f'dummy/{filename.split(".czi")[0]}_green.gif',
                                    f'dummy/{filename.split(".czi")[0]}_all.gif'
+                                   ]
+                    imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=3, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=3, loop=2)
+                    imageio.mimsave(f'./static/{static_urls[2]}', reds + greens, fps=3, loop=2)
+                elif '.tif' in filename or '.tiff' in filename:
+                    reds, greens, info = ReadImage.read_tif(f'./static/dummy/{filename}')
+                    static_urls = [f'dummy/{filename.split(".tif")[0]}_red.gif',
+                                   f'dummy/{filename.split(".tif")[0]}_green.gif',
+                                   f'dummy/{filename.split(".tif")[0]}_all.gif'
                                    ]
                     imageio.mimsave(f'./static/{static_urls[0]}', reds, fps=3, loop=2)
                     imageio.mimsave(f'./static/{static_urls[1]}', greens, fps=3, loop=2)

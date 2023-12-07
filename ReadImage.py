@@ -4,6 +4,7 @@ from nd2reader import ND2Reader
 from czifile import CziFile
 import scipy
 import skimage
+import tifffile
 
 
 def read_nd2(filepath, option='mean'):
@@ -31,15 +32,15 @@ def read_nd2(filepath, option='mean'):
             one_base = np.ones((y_size, x_size), dtype=np.uint8)
 
             for i, (r, g, t) in enumerate(zip(reds, greens, transs)):
-                r_min = np.min(r)
-                g_min = np.min(g)
-                t_min = np.min(t)
                 r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
                 g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
                 t_mode = scipy.stats.mode(t.reshape(t.shape[0] * t.shape[1]), keepdims=False)[0]
                 r = r - r_mode
                 g = g - g_mode
                 t = t - t_mode
+                r_min = np.min(r)
+                g_min = np.min(g)
+                t_min = np.min(t)
                 r = np.maximum(r, zero_base)
                 g = np.maximum(g, zero_base)
                 t = np.maximum(t, zero_base)
@@ -100,12 +101,12 @@ def read_czi(filepath):
         g_max = np.mean(g_max)
         r_max = np.mean(r_max)
         for i, (r, g) in enumerate(zip(reds, greens)):
-            r_min = np.min(r)
-            g_min = np.min(g)
             r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
             g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
             r = r - r_mode
             g = g - g_mode
+            r_min = np.min(r)
+            g_min = np.min(g)
             r = np.maximum(r, zero_base)
             g = np.maximum(g, zero_base)
             r = r / (r_max - r_min)
@@ -122,3 +123,51 @@ def read_czi(filepath):
     return reds, greens, {'zDepth': z_depth, 'xSize': original_x_size, 'ySize': original_y_size,
                           'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown',
                           'time': time}
+
+
+def read_tif(filepath):
+    reds = []
+    greens = []
+    imgs = tifffile.imread(filepath).astype(np.double)
+    z_depth = imgs.shape[0]
+    for z_level in range(z_depth):
+        reds.append(imgs[z_level][0])
+        greens.append(imgs[z_level][1])
+    reds = np.array(reds)
+    greens = np.array(greens)
+
+    original_y_size = reds.shape[1]
+    original_x_size = reds.shape[2]
+    downsampling_x = int(original_x_size / 256.)
+    downsampling_y = int(original_y_size / 256.)
+    reds = skimage.measure.block_reduce(reds, (1, downsampling_x, downsampling_y), np.max)
+    greens = skimage.measure.block_reduce(greens, (1, downsampling_x, downsampling_y), np.max)
+
+    y_size = reds.shape[1]
+    x_size = reds.shape[2]
+    zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
+    one_base = np.ones((y_size, x_size), dtype=np.uint8)
+    r_max = np.mean(np.max(reds, axis=(1, 2)))
+    g_max = np.mean(np.max(greens, axis=(1, 2)))
+
+    for i, (r, g) in enumerate(zip(reds, greens)):
+        r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
+        g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
+        r = r - r_mode
+        g = g - g_mode
+        r = np.maximum(r, zero_base)
+        g = np.maximum(g, zero_base)
+        r_min = np.min(r)
+        g_min = np.min(g)
+        r = r / (r_max - r_min)
+        g = g / (g_max - g_min)
+        r = np.minimum(r, one_base)
+        g = np.minimum(g, one_base)
+        reds[i] = r
+        greens[i] = g
+    reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.uint8)
+    greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
+        np.uint8)
+
+    return reds, greens, {'zDepth': z_depth, 'xSize': original_x_size, 'ySize': original_y_size,
+                          'pixelType': 'Unknown', 'dyeName': 'Unknown', 'dyeId': 'Unknown', 'pixelMicrons': 'Unknown'}
