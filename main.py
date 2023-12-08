@@ -220,7 +220,10 @@ def rad51_classify():
     print('REQUEST URL: ', request.url)
     print('REQUEST FORM: ', request.form)
     if request.method == 'POST':
-        if len(request.files) != 0:
+        print('@@', request.form.get("erase"))
+        print("##", request.form.get("job_id"))
+        print("!!", request.files['filename'])
+        if 'run_program' not in request.form:
             files = request.files.getlist('filename')
             for file in files:
                 if not allowed_file(file.filename):
@@ -244,7 +247,8 @@ def rad51_classify():
                     imageio.mimsave(f'./static/{static_urls[2]}', transs, fps=2, loop=2)
                     imageio.mimsave(f'./static/{static_urls[3]}', reds + greens + transs, fps=2, loop=2)
                 elif '.czi' in filename:
-                    reds, greens, info = ReadImage.read_czi(f'./static/dummy/{filename}')
+                    reds, greens, info = ReadImage.read_czi(f'./static/dummy/{filename}',
+                                                            erase=request.form.get("erase"))
                     static_urls = [f'dummy/{filename.split(".czi")[0]}_red.gif',
                                    f'dummy/{filename.split(".czi")[0]}_green.gif',
                                    f'dummy/{filename.split(".czi")[0]}_all.gif'
@@ -263,7 +267,10 @@ def rad51_classify():
                     imageio.mimsave(f'./static/{static_urls[2]}', reds + greens, fps=3, loop=2)
                 else:
                     return redirect(request.url)
-                return render_template('rad51.html', images=static_urls, len=len(static_urls), info=info)
+                return render_template('rad51.html', erase=request.form.get("erase"),
+                                       job_id=request.form.get("job_id"), filename=filename,
+                                       score=request.form.get("score"),
+                                       images=static_urls, len=len(static_urls), info=info)
             except Exception as e:
                 print('Image create Err:', e)
                 return redirect(request.url)
@@ -311,6 +318,7 @@ def rad51_classify():
                 input_str += f'data = {UPLOAD_FOLDER}/{job_id}/{session["rad51_filename"]}\n'
                 input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
                 input_str += f'score = {str(score)}\n'
+                input_str += f'erase_dead_cells = {False if request.form.get("erase") != "True" else True}'
                 f.write(input_str)
 
             x = session['rad51_filename'].split('.')[0:-1]

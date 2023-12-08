@@ -11,8 +11,11 @@
 <body>
 <h3><b>Required channel order: nd2(nuclei, rad51, trans), czi(nuclei, rad51), tif(nuclei, rad51)</b></h3>
 <form method="post" enctype="multipart/form-data">
-    <input type="file" id="nd2" name="filename" size="50" onchange="javascript:this.form.submit();">
-</form>
+    {% if filename %}
+        <input type="file" id="input_file1" name="filename" size="50" value="{{filename}}" onchange="javascript:this.form.submit();"><br>
+    {% else %}
+        <input type="file" id="input_file2" name="filename" size="50" onchange="javascript:this.form.submit();"><br>
+    {% endif %}
 
 {% if info %}
 Image width, height: {{info.xSize}}x{{info.ySize}} <small>pixels</small><br>
@@ -23,7 +26,6 @@ DyeName: {{info.dyeName}} <br>
 DyeId: {{info.dyeId}} <br>
 Acquisition date: {{info.time}} <br>
 {% endif %}
-
 {% if images %}
     <div class="outsideWrapper">
         <div class="insideWrapper">
@@ -34,11 +36,23 @@ Acquisition date: {{info.time}} <br>
     </div>
 {% endif %}
 
-<form method="post" enctype="multipart/form-data">
-    <p>Job id:<input type="text" name="job_id"></p>
+    {% if job_id %}
+        <p>Job id:<input type="text" name="job_id" value="{{job_id}}"></p>
+    {% else %}
+        <p>Job id:<input type="text" name="job_id"></p>
+    {% endif %}
     <p>
-    <label>Score:</label>
-    <input type="number" id="score" name="score" min="0" max="100" value="90">
+        <label>Score:</label>
+        {% if score %}
+            <input type="number" id="score1" name="score" min="0" max="100" value="{{score}}">
+        {% else %}
+            <input type="number" id="score2" name="score" min="0" max="100" value="90">
+        {% endif %}
+        {% if erase == "True": %}
+            <input type="checkbox" id="erase1" name="erase" value="True" checked>
+        {% else %}
+            <input type="checkbox" id="erase2" name="erase" value="True">
+        {% endif %}
     </p>
     <script src="/static/draw.js"></script>
     <button type="submit" name="run_program">Upload</button>

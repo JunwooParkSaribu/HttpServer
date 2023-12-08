@@ -64,7 +64,7 @@ def read_nd2(filepath, option='mean'):
                                'pixelMicrons': nd.metadata['pixel_microns'], 'time': 'Unknown'}
 
 
-def read_czi(filepath):
+def read_czi(filepath, erase=False):
     with CziFile(filepath) as czi:
         metadata = czi.metadata()
         pixelType = metadata.split('<PixelType>')[1].split('</PixelType>')[0]
