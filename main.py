@@ -318,7 +318,7 @@ def rad51_classify():
                 input_str += f'data = {UPLOAD_FOLDER}/{job_id}/{session["rad51_filename"]}\n'
                 input_str += f'save_dir = {SAVE_FOLDER}/{job_id}\n'
                 input_str += f'score = {str(score)}\n'
-                input_str += f'erase_dead_cells = {False if request.form.get("erase") != "True" else True}'
+                input_str += f'erase = {False if request.form.get("erase") != "True" else True}'
                 f.write(input_str)
 
             x = session['rad51_filename'].split('.')[0:-1]

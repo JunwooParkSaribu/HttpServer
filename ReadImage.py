@@ -7,16 +7,12 @@ import skimage
 import tifffile
 
 
-def read_nd2(filepath, option='mean'):
+def read_nd2(filepath):
     with nd2.ND2File(filepath) as ndfile:
         with ND2Reader(filepath) as nd:
             greens = np.array([np.array(ndfile)[x][0] for x in range(ndfile.shape[0])]).astype(np.double)
             reds = np.array([np.array(ndfile)[x][1] for x in range(ndfile.shape[0])]).astype(np.double)
             transs = np.array([np.array(ndfile)[x][2] for x in range(ndfile.shape[0])]).astype(np.double)
-
-            r_max = np.mean(np.max(reds, axis=(1, 2)))
-            g_max = np.mean(np.max(greens, axis=(1, 2)))
-            t_max = np.mean(np.max(transs, axis=(1, 2)))
 
             original_y_size = reds.shape[1]
             original_x_size = reds.shape[2]
@@ -28,28 +24,21 @@ def read_nd2(filepath, option='mean'):
             transs = skimage.measure.block_reduce(transs, (1, downsampling_x, downsampling_y), np.max)
             y_size = reds.shape[1]
             x_size = reds.shape[2]
-            zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
-            one_base = np.ones((y_size, x_size), dtype=np.uint8)
+
+            r_max = np.max(np.max(reds, axis=(1, 2)))
+            g_max = np.max(np.max(greens, axis=(1, 2)))
+            t_max = np.max(np.max(transs, axis=(1, 2)))
+            r_min = np.min(np.min(reds, axis=(1, 2)))
+            g_min = np.min(np.min(greens, axis=(1, 2)))
+            t_min = np.min(np.min(transs, axis=(1, 2)))
 
             for i, (r, g, t) in enumerate(zip(reds, greens, transs)):
-                r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
-                g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
-                t_mode = scipy.stats.mode(t.reshape(t.shape[0] * t.shape[1]), keepdims=False)[0]
-                r = r - r_mode
-                g = g - g_mode
-                t = t - t_mode
-                r_min = np.min(r)
-                g_min = np.min(g)
-                t_min = np.min(t)
-                r = np.maximum(r, zero_base)
-                g = np.maximum(g, zero_base)
-                t = np.maximum(t, zero_base)
+                r -= r_min
+                g -= g_min
+                t -= t_min
                 r = r / (r_max - r_min)
                 g = g / (g_max - g_min)
                 t = t / (t_max - t_min)
-                r = np.minimum(r, one_base)
-                g = np.minimum(g, one_base)
-                t = np.minimum(t, one_base)
                 reds[i] = r
                 greens[i] = g
                 transs[i] = t
@@ -92,34 +81,25 @@ def read_czi(filepath, erase=False):
         greens = skimage.measure.block_reduce(greens, (1, downsampling_x, downsampling_y), np.max)
         y_size = reds.shape[1]
         x_size = reds.shape[2]
-        zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
-        one_base = np.ones((y_size, x_size), dtype=np.uint8)
         del img
 
-        r_max = np.max(reds, axis=(1, 2))
-        g_max = np.max(greens, axis=(1, 2))
-        g_max = np.mean(g_max)
-        r_max = np.mean(r_max)
+        r_max = np.max(np.max(reds, axis=(1, 2)))
+        g_max = np.max(np.max(greens, axis=(1, 2)))
+        r_min = np.min(np.min(reds, axis=(1, 2)))
+        g_min = np.min(np.min(greens, axis=(1, 2)))
+
         for i, (r, g) in enumerate(zip(reds, greens)):
-            r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
-            g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
-            r = r - r_mode
-            g = g - g_mode
-            r_min = np.min(r)
-            g_min = np.min(g)
-            r = np.maximum(r, zero_base)
-            g = np.maximum(g, zero_base)
+            r -= r_min
+            g -= g_min
             r = r / (r_max - r_min)
             g = g / (g_max - g_min)
-            r = np.minimum(r, one_base)
-            g = np.minimum(g, one_base)
             reds[i] = r
             greens[i] = g
+
         reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)],
                                  axis=3) * 255, dtype=np.uint8)
         greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)],
                                    axis=3) * 255, dtype=np.uint8)
-
     return reds, greens, {'zDepth': z_depth, 'xSize': original_x_size, 'ySize': original_y_size,
                           'pixelType': pixelType, 'dyeName': dyeName, 'dyeId': dyeId, 'pixelMicrons': 'Unknown',
                           'time': time}
@@ -145,29 +125,21 @@ def read_tif(filepath):
 
     y_size = reds.shape[1]
     x_size = reds.shape[2]
-    zero_base = np.zeros((y_size, x_size), dtype=np.uint8)
-    one_base = np.ones((y_size, x_size), dtype=np.uint8)
-    r_max = np.mean(np.max(reds, axis=(1, 2)))
-    g_max = np.mean(np.max(greens, axis=(1, 2)))
+    r_max = np.max(np.max(reds, axis=(1, 2)))
+    g_max = np.max(np.max(greens, axis=(1, 2)))
+    r_min = np.min(np.min(reds, axis=(1, 2)))
+    g_min = np.min(np.min(greens, axis=(1, 2)))
 
     for i, (r, g) in enumerate(zip(reds, greens)):
-        r_mode = scipy.stats.mode(r.reshape(r.shape[0] * r.shape[1]), keepdims=False)[0]
-        g_mode = scipy.stats.mode(g.reshape(g.shape[0] * g.shape[1]), keepdims=False)[0]
-        r = r - r_mode
-        g = g - g_mode
-        r = np.maximum(r, zero_base)
-        g = np.maximum(g, zero_base)
-        r_min = np.min(r)
-        g_min = np.min(g)
+        r -= r_min
+        g -= g_min
         r = r / (r_max - r_min)
         g = g / (g_max - g_min)
-        r = np.minimum(r, one_base)
-        g = np.minimum(g, one_base)
         reds[i] = r
         greens[i] = g
+
     reds = np.array(np.stack([reds, np.zeros(reds.shape), np.zeros(reds.shape)], axis=3) * 255).astype(np.uint8)
     greens = np.array(np.stack([np.zeros(greens.shape), greens, np.zeros(greens.shape)], axis=3) * 255).astype(
         np.uint8)
-
     return reds, greens, {'zDepth': z_depth, 'xSize': original_x_size, 'ySize': original_y_size,
                           'pixelType': 'Unknown', 'dyeName': 'Unknown', 'dyeId': 'Unknown', 'pixelMicrons': 'Unknown'}

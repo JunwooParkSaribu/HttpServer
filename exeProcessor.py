@@ -4,7 +4,6 @@ import datetime
 import numpy as np
 import time
 import queue
-import os
 
 DATA_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/data'
 SAVE_FOLDER = 'C:/Users/jwoo/Desktop/HttpServer/save'
@@ -29,7 +28,7 @@ if __name__ == '__main__':
     job_id_index = -999
     job_type_index = -999
     sleep_time = 10
-    q_size = 50
+    q_size = 100
     process_line = {}
     jobs = []
     job_queue = queue.Queue(maxsize=q_size)
