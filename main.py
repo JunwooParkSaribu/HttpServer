@@ -220,9 +220,7 @@ def rad51_classify():
     print('REQUEST URL: ', request.url)
     print('REQUEST FORM: ', request.form)
     if request.method == 'POST':
-        print('@@', request.form.get("erase"))
-        print("##", request.form.get("job_id"))
-        print("!!", request.files['filename'])
+        print(request.files['filename'])
         if 'run_program' not in request.form:
             files = request.files.getlist('filename')
             for file in files:
