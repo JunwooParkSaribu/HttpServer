@@ -42,11 +42,17 @@ Acquisition date: {{info.time}} <br>
         <p>Job id:<input type="text" name="job_id"></p>
     {% endif %}
     <p>
-        <label>Score:</label>
-        {% if score %}
-            <input type="number" id="score1" name="score" min="0" max="100" value="{{score}}">
+        <label>Nuclei Score:</label>
+        {% if nuclei_score %}
+            <input type="number" id="nuclei_score1" name="nuclei_score" min="0" max="100" value="{{nuclei_score}}">
         {% else %}
-            <input type="number" id="score2" name="score" min="0" max="100" value="90">
+            <input type="number" id="nuclei_score2" name="nuclei_score" min="0" max="100" value="70">
+        {% endif %}
+        <label>Rad51 Score:</label>
+        {% if rad51_score %}
+            <input type="number" id="rad51_score1" name="rad51_score" min="0" max="100" value="{{rad51_score}}">
+        {% else %}
+            <input type="number" id="rad51_score2" name="rad51_score" min="0" max="100" value="85">
         {% endif %}
         <label>Erase dead cells:</label>
         {% if erase == "True": %}
