@@ -279,7 +279,7 @@ def rad51_classify():
                 return render_template('rad51.html', no_file=True)
 
             job_type = 'Rad51_protein'
-            nuclei_score = 70
+            nuclei_score = 80
             rad51_score = 85
 
             if len(request.form['job_id']) == 0:
@@ -288,11 +288,12 @@ def rad51_classify():
             else:
                 job_id = request.form['job_id']
 
-            if 'score' in request.form:
+            if 'nuclei_score' in request.form:
                 nuclei_score = int(request.form.get('nuclei_score'))
-                rad51_score = int(request.form.get('rad51_score'))
                 if nuclei_score < 0 or nuclei_score > 100:
                     nuclei_score = 80
+            if 'rad51_score' in request.form:
+                rad51_score = int(request.form.get('rad51_score'))
                 if rad51_score < 0 or rad51_score > 100:
                     rad51_score = 85
 
