@@ -292,7 +292,7 @@ def rad51_classify():
                 nuclei_score = int(request.form.get('nuclei_score'))
                 rad51_score = int(request.form.get('rad51_score'))
                 if nuclei_score < 0 or nuclei_score > 100:
-                    nuclei_score = 70
+                    nuclei_score = 80
                 if rad51_score < 0 or rad51_score > 100:
                     rad51_score = 85
 
