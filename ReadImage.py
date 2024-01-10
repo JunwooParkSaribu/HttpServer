@@ -54,8 +54,12 @@ def read_nd2(filepath):
 
 
 def read_czi(filepath, erase=False):
+    print(filepath)
+    print('~~~~~~~~~~~~~~~~~~~~')
     with CziFile(filepath) as czi:
+        print("?????????????????")
         metadata = czi.metadata()
+        print('@@@@@@@@@@@@@@@@@@@@')
         pixelType = metadata.split('<PixelType>')[1].split('</PixelType>')[0]
         dyeName = metadata.split('<DyeName>')[1].split('</DyeName>')[0]
         dyeId = metadata.split('<DyeId>')[1].split('</DyeId>')[0]
